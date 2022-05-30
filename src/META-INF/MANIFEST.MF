@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Main-Class: edu.sysu.pmglab.commandParser.types.FILE
-Class-Path: slf4j-api-1.7.32.jar logback-core-1.2.11.jar logback-classic
- -1.2.11.jar utils.jar
+Main-Class: 
+Class-Path: utils.jar slf4j-api-1.7.32.jar logback-core-1.2.11.jar logba
+ ck-classic-1.2.11.jar
 
