@@ -1,0 +1,10 @@
+{
+    "pluginsConfig": {
+        "tbfed-pagefooter": {
+            "copyright":"Copyright ©Liubin Zhang all right reserved",
+            "modify_label": "Last modified time: ",
+            "modify_format": "YYYY-MM-DD HH:mm:ss"
+        }
+    }
+}
+

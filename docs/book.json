@@ -1,0 +1,104 @@
+{
+    "title": "Command Parser 1.1",
+    "description": "Command Parser 1.1 用户文档",
+    "author": "suranyi",
+    "language": "zh-hans",
+    "plugins": [
+        "favicon-absolute",
+        "edit-link",
+        "-lunr",
+        "-search",
+        "search-plus",
+        "chapter-fold",
+        "back-to-top-button",
+        "page-toc-button",
+        "katex",
+        "tbfed-pagefooter",
+        "hide-element",
+        "-highlight",
+        "prism",
+        "prism-themes",
+        "github-buttons",
+        "insert-logo-link-website",
+        "code",
+        "todo",
+        "flexible-alerts",
+        "theme-comscore",
+        "language-picker",
+        "download-pdf-link",
+        "password"
+    ],
+    "pluginsConfig": {
+        "flexible-alerts": {
+            "style": "flat",
+            "comment": {
+                "label": "Comment",
+                "icon": "fa fa-comments",
+                "className": "info"
+            },
+
+            "update": {
+                "label": "Update",
+                "icon": "fa fa-upload",
+                "className": "tip"
+            }
+        },
+        "favicon-absolute": {
+            "favicon": "/assets/logo32.ico",
+            "appleTouchIconPrecomposed152": "/assets/logo.png"
+        },
+        "hide-element": {
+            "elements": [
+                ".gitbook-link"
+            ]
+        },
+        "tbfed-pagefooter": {
+            "copyright":"Copyright ©张柳彬 all right reserved",
+            "modify_label": "文档修订时间: ",
+            "modify_format": "YYYY-MM-DD HH:mm:ss",
+            "hide": false
+        },
+        "edit-link": {
+            "base": "https://github.com/Zhangliubin/commandParser-1.1/tree/main/docs/",
+            "label": ""
+        },
+        "prism": {
+            "css": [
+                "prism-themes/themes/prism-one-light.css"
+            ],
+            "lang": {
+                "shell": "bash"
+            }
+        },
+        "github-buttons": {
+            "buttons": [
+                {
+                    "user": "Zhangliubin",
+                    "repo": "commandParser-1.1",
+                    "type": "star",
+                    "size": "small"
+                }
+            ]
+        },
+        "insert-logo-link-website": {
+            "url": "http://pmglab.top/commandParser/assets/department_logo.png",
+            "link": "https://pmglab.top",
+            "style": "background:#24572c;max-height:45px"
+        },
+        "code": {
+            "copyButtons": true
+        },
+        "language-picker": {
+            "grid-columns": 1
+        },
+        "download-pdf-link": {
+            "base": "http://pmglab.top/commandParser/assets/",
+            "prefix": "book",
+            "label": ""
+        },
+        "password": {
+            "global": 1234
+        }
+    }
+}
+
