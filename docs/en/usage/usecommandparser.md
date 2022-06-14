@@ -1,6 +1,6 @@
 # Import CommandParser.jar
 
-**Method 1 :** In Project Structure, select Libraries and add commandParser-1.1.jar.
+**Method 1 :** Select Libraries in Project Structure and add commandParser-1.1.jar.
 
 ![usecommandparser-way1](../../image/usecommandparser-way1.png)
 
@@ -10,8 +10,8 @@
 
 # Create  Jar Package
 
-After creating the parser source file, importing the commandParser-1.1.jar package, and writing the entry function (main class), the command-line program development is completed. Finally, package the Java project as a JAR package (using IDEA as an example):
+The command-line program development will be completed after creating the parser's source file, importing the commandParser-1.1.jar package, and writing the entry function (main class). Finally, package the Java project as a JAR package (take IDEA as an example):
 
-Click on: Project Structure... > Artifacts > + > JAR > From modules with dependencies... Displays the left view window. Select the entry function location in Main Class and click OK. Finally, go to Build > Build Artifacts.
+Click: "Project Structure"... > "Artifacts" > "+" > "JAR" > "From modules with dependencies...". The left image is then displayed. Select the location of the entry function in Main Class, and click "OK". Finally, click "Build" > "Build Artifacts" to build a JAR package.
 
 ![usecommandparser-exportJar](../../image/usecommandparser-exportJar.png)

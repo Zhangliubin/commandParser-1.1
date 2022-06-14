@@ -1,6 +1,6 @@
 # Export to Java Script
 
-On the `Command Items` tab or the`Command Rules & Global Parameter` tab, click the `Save ` button in the lower right corner to Save the current parser (global shortcut: Ctrl + S). Two save formats are available:
+On the `Command Items` tab or the `Command Rules & Global Parameter` tab, click the `Save ` button at the right corner below to save the current parser (global shortcut: Ctrl + S). Two formats for saving are available:
 
 - **Java Script Builder With Options Format:** Single instance of parser and the creation of java variables.
 - **Java Script Builder Format:** Single instance of parser.
@@ -9,7 +9,7 @@ On the `Command Items` tab or the`Command Rules & Global Parameter` tab, click t
 
 ## Java Script Builder With Options Format
 
-`Java Script Builder With Options Format` infers the variable name (camel naming) from the main command name of the command item, and sets the variable type according to the command type of the command item. There is no need for format conversion of variables (e.g., Object -> Integer). This format supports the following API methods:
+`Java Script Builder With Options Format` infers the variable name (camel naming) from the main command name of the command item, and sets the variable type according to the command type of the command item, without a  format conversion of variables. This format supports the following API methods:
 
 | API                                          | Return Type    | Description                                                  |
 | :------------------------------------------- | :------------- | :----------------------------------------------------------- |
@@ -55,7 +55,7 @@ public static void main(String[] args) {
 
 ## Java Script Builder Format
 
-`Java Script Builder Format` creates a single instance of the parser, which accesses the parameter parsing information (value, whether it was passed in, captured value) by command names (any command name of the command item), and requires formatting when getting the value. This format supports the following API methods:
+`Java Script Builder Format` creates a single instance of the CommandParser, which achieves accessing the parameter information (value, whether it was passed in, captured value) by command names (any command name of the command item), and requires formatting when getting the values. This format supports the following API methods:
 
 | API                                      | Return Type    | Description                                                  |
 | :--------------------------------------- | :------------- | :----------------------------------------------------------- |

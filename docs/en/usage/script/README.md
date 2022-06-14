@@ -1,6 +1,6 @@
 # Initialize Parser {#初始化解析器}
 
-CommandParser has 4 constructions, parameter `boolean init` represents whether to create initial `help` constructor; parameter `String programName`  represents the programmar name of the parser:
+CommandParser has four constructions, parameter `boolean init` is used to confirm whether to create initial `help` parameter (default: true); parameter `String programName` indicates the program name of the parser (default: `<main class>`):
 
 - CommandParser parser = new CommandParser()
 - CommandParser parser = new CommandParser(boolean init)
@@ -11,7 +11,7 @@ CommandParser has 4 constructions, parameter `boolean init` represents whether t
 CommandParser parser = new CommandParser(false);
 ```
 
-# Set Global Parameters {#设置解析器的全局属性}
+# Set Global Property {#设置解析器的全局属性}
 
 CommandParser has 7 globe properties:
 
@@ -21,7 +21,7 @@ CommandParser has 7 globe properties:
 
 - parser.offset(int length)
 
-  Set offset value (default value: `0`). Skip the first `offset` parameters of the input parameters.
+  Set offset value (default value: `0`). Skip the first `offset` parameters of the input commands.
 
   ```bash
   # when offset = 3, the following commmands will skip the first three parameter and parse "--level 5 -t 4 -o ~/test.gz"
@@ -30,35 +30,34 @@ CommandParser has 7 globe properties:
 
 - parser.debug(boolean enable)
 
-  Whether is debug mode (default value: `false`).
+  Debug mode or not (default value: `false`).
 
 - parser.usingAt(boolean enable)
 
-  Whether identify `@` as symbol of getting address (file content the address corresponding is as input parameter) (default value: `true`).
+  Identify `@` as symbol of getting address or not (Under `@` grammar, the parameter will be replaced by file content if“@file”exist.) (default value: `true`).
 
 - parser.setMaxMatchedNum(int length)
 
-  Set the maximum number of matched command items (default value: `-1`). When the maximum number of input and matched command items is reached, the subsequent parameters are no longer parsed, but the parameter value of the last matched command item.
+  Set the maximum number of matched command items (default value: `-1`). When reaching the maximum number of command items, the subsequent commands are no longer parsed, and will be regarded as the parameter value of the last matched command item.
 
   ```bash
   # when maxMatchedItems = 1, the following commmands only matched "bgzip" and following parameters, "compress <file> decompress <file>",  will be the value of "bgzip"
   bgzip compress <file> decompress <file>
   ```
-  
+
 - parser.setAutoHelp(boolean enable)
 
-  When no parameters are input, whether to add `--help` parameter automatically (default value:  `false`).
-  
+  When no parameter is passed in, add `--help` parameter automatically or not (default value: `false`).
+
 - parser.setUsageStyle(IUsage usageStyle)
 
   Set the format of the document (default value: `DefaultStyleUsage.UNIX_TYPE_1`).
-  
+
   ```java
   // DefaultStyleUsage construct:
   public DefaultStyleUsage(String before, String after, String subTitle, int indent1, int indent2, int maxLength, boolean newLineAfterCommandName, String requestMark, String debugMark)
   ```
-  
-  
+
 
 ```java
 parser.setProgramName("<mode>");
@@ -72,15 +71,15 @@ parser.setUsageStyle(DefaultStyleUsage.UNIX_TYPE_1);
 
 # Add Command Group {#添加参数组}
 
-CommandParser add command group by two ways and return the added group:
+CommandParser adds command group by two ways and return this group:
 
 - CommandGroup group = parser.addCommandGroup(String groupName)
 
-  Add the command group named `groupName`. If the same command group has existed in the parser, then return the command group, otherwise return new parameter group.
+  Add the command group named as `groupName`, and then return this new command group. If there exists the command group with the same name, then return the namesake.
 
 - CommandGroup group = parser.addCommandGroup(CommandGroup group)
 
-  If a command group with the same name already exists in the parser, register all command items of the command group; otherwise, add the command group to the parser.
+  If a command group with the same name already exists in the parser, register all command items to the existing command group; otherwise, add the command group to the parser.
 
 ```java
 CommandGroup group001 = parser.addCommandGroup("Mode");
@@ -89,7 +88,7 @@ CommandGroup group002 = parser.addCommandGroup("Options");
 
 # Add Command Item {#添加参数项}
 
-Command items can be injected into the parser through command groups:
+Command items can be added into the parser through command groups:
 
 - CommandItem item = group.register(IType type, String... commandNames)
 
@@ -97,13 +96,13 @@ Command items can be injected into the parser through command groups:
 
 - CommandItem item = group.register(Class<?> tClass, String... commandNames)
 
-  Set command type and command name, and then register command item. The command type (`tClass`) of this method can only identify VALUE (e.g. Integer.class) and ARRAY (e.g. int[].class).
+  Set command type and command name, and then register command item. CommandParser can only identify two command types using this method, including VALUE (e.g. Integer.class) and ARRAY (e.g. int[].class).
 
 - CommandItem item = group.register(CommandItem commandItem)
 
-  Add command item to the parser.
+  Add command item to the parser. If the namesake existing , there will be exceptions (`CommandParserException`).
 
-When registered command item directly through the parser, the command item is registered  into the last added parameter group:
+When registered command item directly through the parser, the command item is registered  into the last added command group:
 
 - CommandItem item = parser.register(IType type, String... commandNames)
 
@@ -111,19 +110,19 @@ When registered command item directly through the parser, the command item is re
 
 - CommandItem item = parser.register(IType type, String... commandNames)
 
-  Set command type and command name, and then register command item. The command type (`tClass`) of this method can only identify VALUE (e.g. Integer.class) and ARRAY (e.g. int[].class).
+  Set command type and command name, and then register command item. CommandParser can only identify two command types using this method, including VALUE (e.g. Integer.class) and ARRAY (e.g. int[].class).
 
 - CommandItem item = parser.register(CommandItem commandItem)
 
-  Add command item to the parser.
+  Add command item to the parser. If the namesake existing , there will be exceptions (`CommandParserException`).
 
 > [!NOTE|label:Command Type`MainType.DerivedType`]
 >
-> Main types includes IType.NONE (only verify that it is passed in), BOOLEAN, BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE, STRING, FILE. Derived types include [parameter type input format](../ui/commanditems.md#参数格式) lists the 16 types.
+> The main types include IType.NONE (be passed in or not), BOOLEAN, BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE, STRING, FILE. Derived types include 16 types listed in [input format of parameter type](../ui/commanditems.md#参数格式).
 
 # Set Properties of Command Item {#设置参数项属性}
 
-Propertie settings for command item all return the command item itself, which can be set through chain calls. For the meaning of the propertie, see: [Edit Command Item](../ui/commanditems.md#编辑参数项).
+After setting properties for command item, it will return a reference to this object, and this process can be achieved by chain calls. The meaning of the properties is shown in [Edit Command Item](../ui/commanditems.md#编辑参数项).
 
 - CommandItem item = item.addOptions(String... options)
 
@@ -131,7 +130,7 @@ Propertie settings for command item all return the command item itself, which ca
 
 - CommandItem item = item.arity(int length)
 
-  Set the arity. -1 indicates an indefinite length (which can be 0 parameters). All parameters up to the next matched command item are regarded as the value of this command item.
+  Set the arity. Only the variable-length parameter can have access to this setting.
 
 - CommandItem item = item.defaultTo(String... defaultValue)
 
@@ -139,22 +138,22 @@ Propertie settings for command item all return the command item itself, which ca
 
 - CommandItem item = item.validateWith(IValidator validator)
 
-  Set validator for command item. Different command types apply different validator methods, see: [Validator](../ui/commanditems.md#参数验证器}).
+  Set validator for command item. Different types of command item have different validators, see details in [Validator](../ui/commanditems.md#参数验证器}).
 
 | Command Type                              | Validator Support Type                                       |
 | :---------------------------------------- | :----------------------------------------------------------- |
-| None, BOOLEAN                             | Validators are not supported.                                |
+| None, BOOLEAN                             | Do not support validator.                                    |
 | BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE | type.validateWith(minValue, maxValue)<br />type.validateWith(minValue) |
-| STRING                                    | STRING.validateWith(String... elements)<br />STRING.validateWith(boolean ignoreCase, final boolean indexAccess,  String... elements)<br /><br />Multiple qualifying values are allowed.<br />ignoreCase: whether to ignores case;<br />indexAccess: allow the use of indexes instead of specific values (0 represents the first qualified value...). |
-| FILE                                      | FILE.validateWith(boolean checkIsExists, boolean checkIsFile, boolean checkIsDirectory, boolean checkInnerResource)<br /><br />checkIsExists: The file path must exist. <br />checkIsFile: The file path cannot point to folder; <br />checkIsDirectory: The file path must point to a folder; <br />checkInnerResource: Preferentially identifies the current runtime resources (allowing access to internal JAR files). |
+| STRING                                    | STRING.validateWith(String... elements)<br />STRING.validateWith(boolean ignoreCase, final boolean indexAccess,  String... elements)<br /><br />Multiple qualified values are separated by spaces.<br />ignoreCase: whether to ignore case or not;<br />indexAccess: allow the use of indexes instead of specific values (0 represents the first qualified value...). |
+| FILE                                      | FILE.validateWith(boolean checkIsExists, boolean checkIsFile, boolean checkIsDirectory, boolean checkInnerResource)<br /><br />checkIsExists: The file path must exist. <br />checkIsFile: The file path cannot be a folder; <br />checkIsDirectory: The file path must be a folder; <br />checkInnerResource: Preferentially identifying the resources of the current runtime  (allowing access to the internal JAR files). |
 
 - CommandItem item = item.setFormat(String format)
 
-  Set format description of command item.
+  Set format for command item.
 
 - CommandItem item = item.setDescription(java.lang.String description)
 
-  Set description of command item.
+  Set descriptions for command item.
 
 ```java
 group001.register(FILE.VALUE, "--compress", "-c")
@@ -193,15 +192,15 @@ group002.register(INTEGER.VALUE, "--threads", "-t")
 
 # Add Command Rule {#设置参数规则}
 
-CommandParser adds a command rule in any of the following ways. For the meaning of the command rule type, see: [Command Rule Type](../ui/commandrules.md#参数规则类型).
+CommandParser adds a command rule by three following ways. For the meaning of different types of command rule is shown in [Command Rule Type](../ui/commandrules.md#参数规则类型).
 
 - parser.addRule(String ruleType, String... commands)
 
-  Add command rule. Available values: SYMBIOSIS or PRECONDITION.
+  Add command rule. Available types: SYMBIOSIS or PRECONDITION.
 
 - parser.addRule(String ruleType, int conditionalValue, String... commands)
 
-  Add command rule. Available values: AT_MOST, AT_LEAST, EQUAL, or MUTUAL_EXCLUSION.
+  Add command rule. Available types: AT_MOST, AT_LEAST, EQUAL, or MUTUAL_EXCLUSION.
 
 - parser.addRule(CommandRule rule)
 
@@ -216,14 +215,14 @@ parser.addRule(MUTUAL_EXCLUSION, 1, "--concat", "--range", "--level", "--threads
 
 # Formatted Parser {#格式化解析器}
 
-After formatting the parser according to the standard template, the parser can be dragged directly into the graphical design interface for editing and management. Graphical design interface readable requirements:
+After formatting the parser according to the standard template, the parser can be dragged directly into the graphical design interface for editing and management if the parser meets the following requirements:
 
-- The class file is complete and can compile independently;
-- preserve `package ${path};`;
-- Class access modifier is `public`;
-- Contain static methods `public static CommandParser getParser()`.
+- The class file is complete, and can be compiled independently;
+- Retain field `package ${path}`;
+- The Class Access Modifier is `public`;
+- Contain static method `public static CommandParser getParser()`.
 
-CommandParserDesigner dynamically compiles the parser source file to a class file and obtains the parser object via `.getParser()`. Finally, the designer graphical interface reproduces the parser based on the member information of the parser object.
+CommandParserDesigner helps to compile the source code to a class file dynamically and obtains the parser object by `.getParser()`. Finally, the graphical interface designer will reproduces the parser based on the class member's information of the parser object.
 
 ```java
 package edu.sysu.pmglab.bgztools;

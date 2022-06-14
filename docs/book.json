@@ -9,11 +9,11 @@
         "-lunr",
         "-search",
         "search-plus",
-        "chapter-fold",
+        "expandable-chapters-small",
         "back-to-top-button",
         "page-toc-button",
         "katex",
-        "tbfed-pagefooter",
+        "pagefooter-freedom",
         "hide-element",
         "-highlight",
         "prism",
@@ -25,10 +25,21 @@
         "flexible-alerts",
         "theme-comscore",
         "language-picker",
-        "download-pdf-link",
-        "password"
+        "get-pdf",
+        "password-pro"
     ],
+    "pdf": {
+        "fontSize": 14
+    },
     "pluginsConfig": {
+        "favicon-absolute": {
+            "favicon": "/assets/logo32.ico",
+            "appleTouchIconPrecomposed152": "/assets/logo.png"
+        },
+        "edit-link": {
+            "base": "https://github.com/Zhangliubin/commandParser-1.1/tree/main/docs/",
+            "label": ""
+        },
         "flexible-alerts": {
             "style": "flat",
             "comment": {
@@ -36,32 +47,24 @@
                 "icon": "fa fa-comments",
                 "className": "info"
             },
-
             "update": {
                 "label": "Update",
                 "icon": "fa fa-upload",
                 "className": "tip"
             }
         },
-        "favicon-absolute": {
-            "favicon": "/assets/logo32.ico",
-            "appleTouchIconPrecomposed152": "/assets/logo.png"
+        "pagefooter-freedom": {
+            "copyright":"Copyright ©张柳彬 all right reserved",
+            "modify_label": "文档修订时间: ",
+            "modify_format": "YYYY-MM-DD HH:mm:ss",
+            "hide": false
         },
         "hide-element": {
             "elements": [
                 ".gitbook-link"
             ]
         },
-        "tbfed-pagefooter": {
-            "copyright":"Copyright ©张柳彬 all right reserved",
-            "modify_label": "文档修订时间: ",
-            "modify_format": "YYYY-MM-DD HH:mm:ss",
-            "hide": false
-        },
-        "edit-link": {
-            "base": "https://github.com/Zhangliubin/commandParser-1.1/tree/main/docs/",
-            "label": ""
-        },
+
         "prism": {
             "css": [
                 "prism-themes/themes/prism-one-light.css"
@@ -89,15 +92,14 @@
             "copyButtons": true
         },
         "language-picker": {
-            "grid-columns": 1
+            "grid-columns": 2
         },
-        "download-pdf-link": {
+        "get-pdf": {
             "base": "http://pmglab.top/commandParser/assets/",
-            "prefix": "book",
+            "prefix": "UsageManual",
             "label": ""
         },
-        "password": {
-            "global": 1234
+        "password-pro": {
         }
     }
 }

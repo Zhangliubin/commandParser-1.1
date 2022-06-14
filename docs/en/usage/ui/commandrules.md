@@ -1,33 +1,33 @@
-# Management Command Rule {#管理参数规则}
+# Command Rule Management {#管理参数规则}
 
-Add command rules between command items to the `Command Rules & Global Parameter` tab. Click the right mouse button in the blank area of the command rule panel or select the command rule to expand the management menu. The management menu contains the following six operations:
+Add command rules between command items in the `Command Rules & Global Parameter` tab. Click the right mouse button in the blank area of the command rule panel or select the command rule to expand the management menu. The management menu contains the following six operations:
 
-- **New:** create new command rule (shortcut: Ctrl + N).
+- **New:** Create a new command rule (shortcut: Ctrl + N).
 - **Insert:** Insert a new command rule at the current location.
-- **Edit:** Edit the command rule (shortcut: Double-click the command rule).
-- **Delete:**Delete the command rule (shortcut: Ctrl + Delete).
-- **Up:** Move the command rule up (shortcut: Ctrl + U).
-- **Down:** Move the command rule dwon (shortcut: Ctrl + D).
+- **Edit:** Edit the specified command rule (shortcut: Double-click the command rule).
+- **Delete:** Delete the specified command rule (shortcut: Ctrl + Delete).
+- **Up:** Move up the specified command rule (shortcut: Ctrl + U).
+- **Down:** Move down the specified command rule (shortcut: Ctrl + D).
 
-In the lower menu bar, "+" corresponds to New, "-" corresponds to Delete, "↑" corresponds to Up, and "↓" corresponds to Down.
+In the menu bar below, "+" corresponds to New, "-" corresponds to Delete, "↑" corresponds to Up, and "↓" corresponds to Down.
 
 ![commandrules-managercommandrules](../../../image/commandrules-managercommandrules.png)
 
 # Search Command Rule {#搜索参数规则}
 
-In the search box (Ctrl + F) on the lower part of the command rule panel, set the search attribute (check box) and content (text box). Press Enter to search for the matched command rule.
+In the search box (Ctrl + F) at the lower part of the command rule panel, users can set the search attribute (check box) and content (text box), and then press Enter to search the matched command rule.
 
 ![commandrules-searchrules](../../../image/commandrules-searchrules.png)
 
 # Edit Command Rule {#编辑参数规则}
 
-When creating or editing a command rule, the command rule subpanel is displayed. Cannot set rules for "Help", "Request" type command items.
+When creating or editing a command rule, the command rule sub-panel will pop up. Set rules for command items including "Help", "Request" is not allowed.
 
 ![commandrules-editrule](../../../image/commandrules-editrule.png)
 
 # Command Rule Type {#参数规则类型}
 
-When command rule selects command items $$\{p_1,p_2,\cdots,p_n\}$$ , the meanings of command rule type are as follows:
+When the command items are specified from $$\{p_1,p_2,\cdots,p_n\}$$ , the meanings of different command rule types are showing as follows:
 
 | Command Rule Type  | Conditional Number | Description                               |
 | :--------------------- | :--------: | :----------------------------------------------------- |

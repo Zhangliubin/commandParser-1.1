@@ -3,6 +3,7 @@ package edu.sysu.pmglab.commandParser;
 import edu.sysu.pmglab.commandParser.exception.CommandParserException;
 import edu.sysu.pmglab.container.array.StringArray;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;

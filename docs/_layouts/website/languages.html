@@ -19,5 +19,7 @@
 		{% endif %}
     </div>
 </div>
-<script type="text/javascript">window.location.href="{{languages.list[0].id}}"</script>
+
+<!-- 设置自动跳转到第一个 url 处 -->
+<script type="text/javascript">if ({{languages.list.length}} >= 1) {window.location.href="{{languages.list[0].id}}";}</script>
 {% endblock %}

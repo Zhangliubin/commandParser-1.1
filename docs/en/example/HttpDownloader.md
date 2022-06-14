@@ -1,8 +1,8 @@
 # About HttpDownloader {#项目概述}
 
-Bioinformatics/medical informatics research requires a large number of public data resources. However, these resources are accompanied with many problems (e.g., redirection jump, speed limit in the cloud, breakpoint transfer, etc.) when downloading due to their huge data volume (e.g., dbNSFP database reaches over 30 GB, GnomAD database reaches over 1 TB). In order to simplify the process of downloading and updating these databases, and to effectively integrate this process as an API tool into other public projects (here mainly for Java development), we have developed HttpDownloader. in addition, support for FTP downloads is being planned.
+Researches on bioinformatics and medical informatics require a large amount of public resources. However, due to their huge data volume (e.g., dbNSFP database reaches over 30 GB, gnomAD database reaches over 1 TB), users are always suffering from many problems (e.g., redirection jump, speed limit in the cloud, breakpoint transfer, etc.) when downloading these resources. In order to simplify the process of downloading and updating these databases, and integrate this process as an API tool into other public projects (mainly for Java development) effectively, we have developed the HttpDownloader. In addition, support for FTP downloads is being planned.
 
-HttpDownloader is a simple Http downloader based on the Java platform, designed to enhance the basic resource download functionality. It currently supports: breakpoint transfer, URL redirection based on the Location of the response header, parallel download (requires the server to support chunked or get 206 response codes after sending segmented requests), download resources with dynamically obtained file size, set proxy.
+HttpDownloader is a simple Http downloader based on the Java platform, designed to enhance the download function for basic resources. HttpDownloader now supports for: breakpoint transfer, URL redirection based on the Location of the response header, parallel download (requires the server to support chunked or get 206 response codes after sending segmented requests), dynamically getting file size for resource downloads, proxy setting.
 
 | Type            | URL                                                          |
 | :-------------- | :----------------------------------------------------------- |
@@ -12,31 +12,31 @@ HttpDownloader is a simple Http downloader based on the Java platform, designed 
 
 # API {#API-方法}
 
-HttpDownloader 的主要 API 方法可以在 edu.sysu.pmglab.downloader.HttpDownloader 中找到 (现已集成在 CommandParser 包中), 分别为:
+The main API methods for HttpDownloader can be found in `edu.sysu.pmglab.downloader.HttpDownloader`, which has been integrated in the commandParser package, including:
 
 - **download:** HttpDownloader.instance(String url)
-  - Number of threads for parallel download: .setThreads(int nThreads)
+  - Set the number of threads for parallel download: .setThreads(int nThreads)
   - Set the output file name: .setOutputFile(File outputFile) 和 .setOutputFile(String outputFileName)
-  - Set the cache data path: .setTempDir(File tempDir) 和 .setTempDir(File tempDirName)
-  - Set the proxy: . setProxy(String host, String port) 和 .setProxy(String hostPort)
-  - Set the maximum wait time (unit: second): .setTimeOut(int timeOut)
-  - Overwrite existing files with: .clean(boolean clean)
+  - Set the temporary path for cache data: .setTempDir(File tempDir) 和 .setTempDir(File tempDirName)
+  - Set the proxy: .setProxy(String host, String port) 和 .setProxy(String hostPort)
+  - Set the maximum waitting time (unit: second): .setTimeOut(int timeOut)
+  - Clearing cached data: .clean(boolean clean)
 
-When the instantiation task is complete, submit the corresponding task via `.download()`.
+When the instantiation task is complete, submit the corresponding task by `.download()`.
 
 # Design Parser {#根据-API-设计解析器}
 
-The first input parameter of the HttpDownloader is identified as the URL address, and from the second input parameter onwards it is parsed as options. The parser creation steps are as follows:
+The first parameter of input command will be identified as the URL address by HttpDownloader, and the following parameters will be parsed as options (set offset=1). The steps of parser creation are described as following:
 
 **Step1:** Create command group：Options;
 
 **Step2:** Create command items for `Options` group: --output; --temp-dir, --threads, --overwrite, --proxy, --time-out, --no-auto-retry;
 
-**Step3:** Set program name to: `<mode>`, offset to `1`;
+**Step3:** Set the program name: `<mode>`, set offset as `1`;
 
-**Step4:** Set the Usage Style to `Unix_Style_3` and set the subtitle as follows:
+**Step4:** Set the Usage Style as `Unix_Style_3` and set the subtitle as follows:
 
-![HttpDownloader-subtitle](../../image/HttpDownloader-subtitle.png)
+![HttpDownloader-subtitle](../../image/HttpDownloader-subtitle-5194684.png)
 
 **Step5:** [Export to Java Script Builder With Options Format](http://pmglab.top/commandParser/downloader/HttpDownloaderParser.java).
 
@@ -90,11 +90,11 @@ public static void main(String[] args) {
 
 # Create Jar Package {#创建-jar-包}
 
-Click on: Project Structure... > Artifacts > + > JAR > From modules with dependencies... .In Main Class, select the entry function, and packaged as [downloader-1.0.jar](http://pmglab.top/commandParser/downloader/downloader-1.0.jar):
+Click: "Project Structure..." > "Artifacts" > "+" > "JAR" > "From modules with dependencies...". Select the entry function in Main Class, and packaged as [downloader-1.0.jar](http://pmglab.top/commandParser/downloader/downloader-1.0.jar):
 
 ![HttpDownloader-buildJar](../../image/HttpDownloader-buildJar.png)
 
-Go to the folder where `downloader-1.0.jar` is located and enter the command on the console to display the document:
+Go to the folder where `downloader-1.0.jar` is located, and enter the command on the console to display the document:
 
 ```shell
 java -jar downloader-1.0.jar
