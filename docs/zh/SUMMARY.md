@@ -5,7 +5,7 @@
 * [Command Parser 简介](README.md)
 * [命令行界面](command-line-interface.md)
 * [下载与安装](download.md)
-* [API 文档](http://pmglab.top/commandParser/api-docs/index.html)
+* [API 文档](https://pmglab.top/commandParser/api-docs/index.html)
 
 ### 快速入门
 
