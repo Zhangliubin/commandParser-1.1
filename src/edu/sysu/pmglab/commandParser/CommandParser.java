@@ -991,5 +991,9 @@ public class CommandParser implements Iterable<CommandItem>, Cloneable {
     public int numOfCommandGroups() {
         return this.groups.size();
     }
+
+    public static void main(String[] args) {
+        System.out.println("Version: CommandParser-" + VERSION + " (https://pmglab.top/commandParser)");
+    }
 }
 

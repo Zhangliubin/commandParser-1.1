@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: edu.sysu.pmglab.bgztools.BGZToolkit
+Main-Class: edu.sysu.pmglab.commandParser.CommandParser
 
