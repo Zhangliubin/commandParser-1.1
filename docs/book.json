@@ -19,7 +19,7 @@
         "prism",
         "prism-themes",
         "github-buttons",
-        "insert-logo-link-website",
+        "summary-logo",
         "code",
         "todo",
         "flexible-alerts",
@@ -33,7 +33,7 @@
     },
     "pluginsConfig": {
         "favicon-absolute": {
-            "favicon": "/assets/logo32.ico",
+            "favicon": "assets/logo32.ico",
             "appleTouchIconPrecomposed152": "/assets/logo.png"
         },
         "edit-link": {
@@ -57,7 +57,7 @@
             "copyright":"Copyright ©张柳彬 all right reserved",
             "modify_label": "文档修订时间: ",
             "modify_format": "YYYY-MM-DD HH:mm:ss",
-            "hide": false
+            "hide": true
         },
         "hide-element": {
             "elements": [
@@ -83,10 +83,10 @@
                 }
             ]
         },
-        "insert-logo-link-website": {
-            "url": "http://pmglab.top/commandParser/assets/department_logo.png",
+        "summary-logo": {
+            "logo": "assets/department_logo.png",
             "link": "https://pmglab.top",
-            "style": "background:#24572c;max-height:45px"
+            "style": "background:#24572c;max-width:300px"
         },
         "code": {
             "copyButtons": true
