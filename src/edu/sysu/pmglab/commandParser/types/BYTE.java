@@ -248,7 +248,12 @@ public enum BYTE implements IType {
             if (values.containsKey(groups[0])) {
                 throw new ParameterException("key " + groups[0] + " is set repeatedly");
             }
-            values.put(groups[0], (byte[]) ARRAY_COMMA.convert(groups[1]));
+
+            if (groups[1].length() == 0) {
+                values.put(groups[0], new byte[0]);
+            } else {
+                values.put(groups[0], (byte[]) ARRAY_COMMA.convert(groups[1]));
+            }
         }
         return Collections.unmodifiableMap(values);
     }, null, -1, "<string>:<byte>,<byte>,... <string>:<byte>,<byte>,... ..."),

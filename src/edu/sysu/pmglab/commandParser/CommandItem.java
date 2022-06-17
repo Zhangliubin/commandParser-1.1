@@ -248,6 +248,12 @@ public class CommandItem implements Iterable<String>, Cloneable {
      * @return 本参数项
      */
     public CommandItem defaultTo(String... defaultValue) {
+        if (defaultValue == null) {
+            this.defaultValue = this.converter.getDefaultValue();
+            this.defaultValueOrigin = null;
+            return this;
+        }
+
         if (defaultValue.length == 0 || (defaultValue.length == 1 && defaultValue[0] == null)) {
             this.defaultValue = this.converter.getDefaultValue();
             this.defaultValueOrigin = null;
@@ -280,6 +286,12 @@ public class CommandItem implements Iterable<String>, Cloneable {
      * @return 本参数项
      */
     public CommandItem defaultTo(Boolean... values) {
+        if (values == null) {
+            this.defaultValue = this.converter.getDefaultValue();
+            this.defaultValueOrigin = null;
+            return this;
+        }
+
         int index = 0;
         String[] arrays = new String[values.length];
         for (Boolean value : values) {
@@ -299,6 +311,12 @@ public class CommandItem implements Iterable<String>, Cloneable {
      * @return 本参数项
      */
     public CommandItem defaultTo(Number... values) {
+        if (values == null) {
+            this.defaultValue = this.converter.getDefaultValue();
+            this.defaultValueOrigin = null;
+            return this;
+        }
+
         int index = 0;
         String[] arrays = new String[values.length];
         for (Number value : values) {
@@ -318,6 +336,12 @@ public class CommandItem implements Iterable<String>, Cloneable {
      * @return 本参数项
      */
     public CommandItem defaultTo(File... values) {
+        if (values == null) {
+            this.defaultValue = this.converter.getDefaultValue();
+            this.defaultValueOrigin = null;
+            return this;
+        }
+
         int index = 0;
         String[] arrays = new String[values.length];
         for (File value : values) {

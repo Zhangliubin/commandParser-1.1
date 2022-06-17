@@ -204,7 +204,12 @@ public enum SHORT implements IType {
             if (values.containsKey(groups[0])) {
                 throw new ParameterException("key " + groups[0] + " is set repeatedly");
             }
-            values.put(groups[0], (short[]) RANGE.convert(groups[1]));
+
+            if (groups[1].length() == 0) {
+                values.put(groups[0], new short[0]);
+            } else {
+                values.put(groups[0], (short[]) ARRAY_COMMA.convert(groups[1]));
+            }
         }
         return Collections.unmodifiableMap(values);
     }, null, -1, "<string>:<short>-<short> <string>:<short>-<short> ..."),

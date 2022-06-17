@@ -151,7 +151,11 @@ public enum BOOLEAN implements IType {
                 throw new ParameterException("key " + groups[0] + " is set repeatedly");
             }
 
-            values.put(groups[0], (boolean[]) ARRAY_COMMA.convert(groups[1]));
+            if (groups[1].length() == 0) {
+                values.put(groups[0], new boolean[0]);
+            } else {
+                values.put(groups[0], (boolean[]) ARRAY_COMMA.convert(groups[1]));
+            }
         }
         return Collections.unmodifiableMap(values);
     }, null, -1, "<string>:<bool>,<bool>,... <string>:<bool>,<bool>,... ..."),
