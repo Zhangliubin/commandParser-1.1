@@ -3,7 +3,6 @@ package edu.sysu.pmglab.commandParser;
 import edu.sysu.pmglab.commandParser.exception.CommandParserException;
 import edu.sysu.pmglab.container.array.StringArray;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
@@ -66,6 +65,9 @@ public class CommandRule implements Iterable<String> {
         if (DEPENDENT_VALIDATOR.contains(type)) {
             this.type = type;
             this.number = -1;
+        } else if (NUMBER_VALIDATOR.contains(type)) {
+            this.type = type;
+            this.number = 1;
         } else {
             throw new CommandParserException("syntax error: rule type only support one of " + DEPENDENT_VALIDATOR);
         }
@@ -86,6 +88,9 @@ public class CommandRule implements Iterable<String> {
         if (DEPENDENT_VALIDATOR.contains(type)) {
             this.type = type;
             this.number = -1;
+        } else if (NUMBER_VALIDATOR.contains(type)) {
+            this.type = type;
+            this.number = 1;
         } else {
             throw new CommandParserException("syntax error: rule type only support one of " + DEPENDENT_VALIDATOR);
         }
