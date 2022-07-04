@@ -350,7 +350,7 @@ public class CommandParserBuilder {
         builder.append("    /**\n");
         builder.append("     * Parse parameters (from parameters file), and return the CommandOptions\n");
         builder.append("     */\n");
-        builder.append("    public static CommandOptions parse(File argsFile) {\n");
+        builder.append("    public static CommandOptions parse(File argsFile) throws IOException {\n");
         builder.append("        return INSTANCE.parser.parse(argsFile);\n");
         builder.append("    }\n");
         builder.append("\n");
