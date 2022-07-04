@@ -319,7 +319,7 @@ public class CommandParserBuilder {
         }
 
         // 设置数据格式
-        if (!commandItem.isDefaultFormat()) {
+        if (!commandItem.getDefaultFormat().equals(commandItem.getFormat())) {
             builder.append("\n                .setFormat(\"" + commandItem.getFormat() + "\")");
         }
 

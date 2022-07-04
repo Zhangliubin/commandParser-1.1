@@ -35,7 +35,6 @@ public class CommandItem implements Iterable<String>, Cloneable {
     private String defaultValueOrigin;
     private String description;
     private String format;
-    private boolean isDefaultFormat;
 
     /**
      * 允许的参数名规则
@@ -97,7 +96,6 @@ public class CommandItem implements Iterable<String>, Cloneable {
         this.defaultValue = type.getDefaultValue();
         this.defaultValueOrigin = null;
         this.format = this.arity == 0 ? "" : commandNames[0] + " " + type.getDefaultFormat();
-        this.isDefaultFormat = true;
         this.description = "";
     }
 
@@ -170,7 +168,6 @@ public class CommandItem implements Iterable<String>, Cloneable {
         this.defaultValue = type.getDefaultValue();
         this.defaultValueOrigin = null;
         this.format = this.arity == 0 ? "" : commandNames[0] + " " + type.getDefaultFormat();
-        this.isDefaultFormat = true;
         this.description = "";
     }
 
@@ -422,19 +419,8 @@ public class CommandItem implements Iterable<String>, Cloneable {
         }
 
         // 只要调用了该语句, 格式就被修改了
-        this.isDefaultFormat = false;
         return this;
     }
-
-    /**
-     * 是否为默认格式
-     *
-     * @return 是否为默认格式
-     */
-    public boolean isDefaultFormat() {
-        return this.isDefaultFormat;
-    }
-
 
     /**
      * 获取第一个参数名
@@ -558,6 +544,15 @@ public class CommandItem implements Iterable<String>, Cloneable {
      */
     public String getFormat() {
         return this.format;
+    }
+
+    /**
+     * 获取默认的参数描述
+     *
+     * @return 默认的参数描述信息
+     */
+    String getDefaultFormat() {
+        return this.arity == 0 ? "" : commandNames[0] + " " + converter.getDefaultFormat();
     }
 
     /**
