@@ -80,6 +80,7 @@ public class CommandParserBuilder {
 
         // 导入类型包
         builder.append("import edu.sysu.pmglab.commandParser.types.*;\n");
+        builder.append("import java.io.IOException;\n");
 
         builder.append("\n");
         // 导入静态变量包
