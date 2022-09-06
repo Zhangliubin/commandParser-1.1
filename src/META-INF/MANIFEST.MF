@@ -1,3 +1,4 @@
 Manifest-Version: 1.0
 Main-Class: edu.sysu.pmglab.commandParser.CommandParser
+Class-Path: utils.jar
 

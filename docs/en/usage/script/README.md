@@ -145,7 +145,7 @@ After setting properties for command item, it will return a reference to this ob
 | None, BOOLEAN                             | Do not support validator.                                    |
 | BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE | type.validateWith(minValue, maxValue)<br />type.validateWith(minValue) |
 | STRING                                    | STRING.validateWith(String... elements)<br />STRING.validateWith(boolean ignoreCase, final boolean indexAccess,  String... elements)<br /><br />Multiple qualified values are separated by spaces.<br />ignoreCase: whether to ignore case or not;<br />indexAccess: allow the use of indexes instead of specific values (0 represents the first qualified value...). |
-| FILE                                      | FILE.validateWith(boolean checkIsExists, boolean checkIsFile, boolean checkIsDirectory, boolean checkInnerResource)<br /><br />checkIsExists: The file path must exist. <br />checkIsFile: The file path cannot be a folder; <br />checkIsDirectory: The file path must be a folder; <br />checkInnerResource: Preferentially identifying the resources of the current runtime  (allowing access to the internal JAR files). |
+| FILE                                      | FILE.validateWith(boolean checkIsExists, boolean checkIsFile, boolean checkIsDirectory)<br /><br />checkIsExists: The file path must exist. <br />checkIsFile: The file path cannot be a folder; <br />checkIsDirectory: The file path must be a folder |
 
 - CommandItem item = item.setFormat(String format)
 

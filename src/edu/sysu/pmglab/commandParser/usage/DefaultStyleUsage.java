@@ -6,11 +6,10 @@ import edu.sysu.pmglab.container.array.Array;
 import edu.sysu.pmglab.container.array.BaseArray;
 import edu.sysu.pmglab.container.array.StringArray;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * @author suranyi
+ * 自动文档样式
  */
 
 public class DefaultStyleUsage implements IUsage {

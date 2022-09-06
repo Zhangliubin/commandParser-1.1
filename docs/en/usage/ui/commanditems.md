@@ -96,5 +96,5 @@ Validators for different types of command item are shown as below:
 | None, Boolean                             | Don't support validator                                      |
 | Byte, Short, Integer, Long, Float, Double | Validators for numeric range :<br />1. Range (including boundary values): minimum to maximum; <br />2. Specify minimum value: ≥ minimum value. |
 | String                                    | Validators for qualified values: <br />Multiple qualified values are separated by spaces.<br />ignoreCase: whether to ignore case or not;<br />indexAccess: allow the use of indexes instead of specific values (0 represents the first qualified value...). |
-| File                                      | Validators for files: <br />File Exists: The file path must exist. <br />Single File: The file path cannot be a folder; <br />Directory: The file path must be a folder; <br />Inner Resource: Preferentially identifying the resources of the current runtime  (allowing access to the internal JAR files). |
+| File                                      | Validators for files: <br />File Exists: The file path must exist. <br />Single File: The file path cannot be a folder; <br />Directory: The file path must be a folder |
 

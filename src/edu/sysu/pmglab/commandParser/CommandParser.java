@@ -9,15 +9,16 @@ import edu.sysu.pmglab.container.File;
 import edu.sysu.pmglab.container.array.Array;
 import edu.sysu.pmglab.container.array.BaseArray;
 import edu.sysu.pmglab.container.array.StringArray;
-import edu.sysu.pmglab.easytools.ValueUtils;
+import edu.sysu.pmglab.easytools.ArrayUtils;
 import edu.sysu.pmglab.unifyIO.FileStream;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
- * @author suranyi
+ * 参数解析器
  */
 
 public class CommandParser implements Iterable<CommandItem>, Cloneable {
@@ -90,7 +91,7 @@ public class CommandParser implements Iterable<CommandItem>, Cloneable {
                     .addOptions(CommandItem.HELP, CommandItem.HIDDEN);
         }
 
-        this.programName = ValueUtils.notNull(programName, "");
+        this.programName = programName == null ? "" : programName;
     }
 
     /**
@@ -109,7 +110,7 @@ public class CommandParser implements Iterable<CommandItem>, Cloneable {
      * @return 当前解析器
      */
     public CommandParser setProgramName(String programName) {
-        this.programName = ValueUtils.notNull(programName, "");
+        this.programName = programName == null ? "" : programName;
         return this;
     }
 
@@ -295,7 +296,7 @@ public class CommandParser implements Iterable<CommandItem>, Cloneable {
         if (this.groups.size() == 0) {
             return addCommandGroup("Options").register(type, commandNames);
         } else {
-            return this.groups.get(-1).register(type, commandNames);
+            return this.groups.get(this.groups.size() - 1).register(type, commandNames);
         }
     }
 
@@ -310,7 +311,7 @@ public class CommandParser implements Iterable<CommandItem>, Cloneable {
         if (this.groups.size() == 0) {
             return addCommandGroup("Options").register(tClass, commandNames);
         } else {
-            return this.groups.get(-1).register(tClass, commandNames);
+            return this.groups.get(this.groups.size() - 1).register(tClass, commandNames);
         }
     }
 
@@ -324,7 +325,7 @@ public class CommandParser implements Iterable<CommandItem>, Cloneable {
         if (this.groups.size() == 0) {
             return addCommandGroup("Options").register(commandItem);
         } else {
-            return this.groups.get(-1).register(commandItem);
+            return this.groups.get(this.groups.size() - 1).register(commandItem);
         }
     }
 
@@ -611,7 +612,7 @@ public class CommandParser implements Iterable<CommandItem>, Cloneable {
         }
 
         // 包装输入的参数信息
-        StringArray params = new StringArray(args, this.offset, args.length - this.offset);
+        StringArray params = StringArray.wrap(ArrayUtils.copyOfRange(args, this.offset, args.length));
 
         // 查看是否包含 @ 指令，如果包含则将内容解析出来
         parseAtSymbol(params);
@@ -657,7 +658,7 @@ public class CommandParser implements Iterable<CommandItem>, Cloneable {
      * @throws IOException 读取文件时可能触发 IO 异常
      */
     public static String[] readFromFile(File file) throws IOException {
-        try (FileStream fileStream = new FileStream(file, file.getFileName().endsWith(".gz") ? FileStream.GZIP_READER : FileStream.DEFAULT_READER)) {
+        try (FileStream fileStream = new FileStream(file, file.getName().endsWith(".gz") ? FileStream.GZIP_READER : FileStream.DEFAULT_READER)) {
             return convertStrings(new String(fileStream.readAll()));
         }
     }
@@ -755,7 +756,7 @@ public class CommandParser implements Iterable<CommandItem>, Cloneable {
                 for (String arg : args) {
                     if (arg.startsWith("@")) {
                         try {
-                            newArgs.addAll(readFromFile(File.of(arg.substring(1))));
+                            newArgs.addAll(readFromFile(new File((arg.substring(1)))));
                         } catch (IOException e) {
                             throw new ParameterException("unable to get parameters from " + arg.substring(1) + ": " + e.getMessage());
                         }
@@ -784,7 +785,7 @@ public class CommandParser implements Iterable<CommandItem>, Cloneable {
      */
     private boolean checkParser() {
         // 先检查指令名称是否有重复
-        HashSet<String> commandNames = new HashSet<>();
+        Set<String> commandNames = new LinkedHashSet<>();
         for (CommandItem commandItem : this) {
             for (String commandName : commandItem) {
                 if (commandNames.contains(commandName)) {
@@ -800,7 +801,7 @@ public class CommandParser implements Iterable<CommandItem>, Cloneable {
 
         // 再检查规则里是否有错误的设置
         for (CommandRule commandRule : this.rules) {
-            HashSet<String> commandNameSet = new HashSet<>();
+            Set<String> commandNameSet = new LinkedHashSet<>();
 
             for (String commandName : commandRule) {
                 CommandItem commandItem = getCommandItem(commandName);
@@ -993,7 +994,9 @@ public class CommandParser implements Iterable<CommandItem>, Cloneable {
     }
 
     public static void main(String[] args) {
-        System.out.println("Version: CommandParser-" + VERSION + " (https://pmglab.top/commandParser)");
+        System.out.println("Version: CommandParser-" + VERSION);
+        System.out.println("Online Manual: https://pmglab.top/commandParser");
+        System.out.println("Github Repository: https://github.com/Zhangliubin/commandParser-1.1");
     }
 }
 

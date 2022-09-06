@@ -1,20 +1,16 @@
 package edu.sysu.pmglab.commandParser;
 
-import edu.sysu.pmglab.check.Assert;
 import edu.sysu.pmglab.commandParser.exception.CommandParserException;
 import edu.sysu.pmglab.commandParser.types.IType;
 import edu.sysu.pmglab.container.array.Array;
 import edu.sysu.pmglab.container.array.BaseArray;
 import edu.sysu.pmglab.container.array.StringArray;
+import edu.sysu.pmglab.easytools.Assert;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
- * @author suranyi
+ * 参数组
  */
 
 public class CommandGroup implements Iterable<CommandItem>, Cloneable {
@@ -23,10 +19,11 @@ public class CommandGroup implements Iterable<CommandItem>, Cloneable {
      */
     final String name;
     final BaseArray<CommandItem> items = new Array<>(CommandItem[].class);
-    final HashMap<String, CommandItem> registerCommands = new HashMap<>();
+    final Map<String, CommandItem> registerCommands = new HashMap<>();
 
     /**
      * 构造器
+     *
      * @param name 参数组名
      */
     public CommandGroup(String name) {
@@ -40,13 +37,13 @@ public class CommandGroup implements Iterable<CommandItem>, Cloneable {
     /**
      * 添加需要捕获的参数信息
      *
-     * @param type 参数类型
+     * @param type         参数类型
      * @param commandNames 参数名
      * @return 注册进该参数组的参数项
      */
     public CommandItem register(IType type, String... commandNames) {
-        Assert.NotNull(type);
-        Assert.NotEmpty(commandNames);
+        Assert.that(type != null);
+        Assert.that(commandNames != null && commandNames.length != 0);
 
         // 验证参数名是否合法、参数名不可重复
         for (String commandName : commandNames) {
@@ -67,12 +64,12 @@ public class CommandGroup implements Iterable<CommandItem>, Cloneable {
     /**
      * 添加需要捕获的参数信息
      *
-     * @param tClass 参数类型
+     * @param tClass       参数类型
      * @param commandNames 参数名
      * @return 注册进该参数组的参数项
      */
     public CommandItem register(Class<?> tClass, String... commandNames) {
-        Assert.NotEmpty(commandNames);
+        Assert.that(commandNames != null && commandNames.length != 0);
 
         // 验证参数名是否合法、参数名不可重复
         for (String commandName : commandNames) {
@@ -92,11 +89,12 @@ public class CommandGroup implements Iterable<CommandItem>, Cloneable {
 
     /**
      * 添加需要捕获的参数信息
+     *
      * @param commandItem 参数项
      * @return 注册进该参数组的参数项
      */
     public CommandItem register(CommandItem commandItem) {
-        Assert.NotNull(commandItem);
+        Assert.that(commandItem != null);
 
         // 验证参数名是否合法、参数名不可重复
         for (String commandName : commandItem) {
@@ -116,14 +114,15 @@ public class CommandGroup implements Iterable<CommandItem>, Cloneable {
 
     /**
      * 将另一个参数组的指令注册到本参数组
+     *
      * @param group 其他参数组
      * @return 本参数组
      */
     public CommandGroup registerAll(CommandGroup group) {
-        Assert.NotNull(group);
+        Assert.that(group != null);
 
         // 验证参数名是否合法、参数名不可重复
-        Set<String> intersection = new HashSet<>(group.registerCommands.keySet());
+        Set<String> intersection = new LinkedHashSet<>(group.registerCommands.keySet());
         intersection.retainAll(this.registerCommands.keySet());
         if (intersection.size() != 0) {
             // 说明有重复指令名
@@ -143,6 +142,7 @@ public class CommandGroup implements Iterable<CommandItem>, Cloneable {
 
     /**
      * 获取参数组名
+     *
      * @return 获取参数组名
      */
     public String getGroupName() {
@@ -151,6 +151,7 @@ public class CommandGroup implements Iterable<CommandItem>, Cloneable {
 
     /**
      * 是否包含参数项
+     *
      * @param commandName 参数名，可以是主参数名或副参数名
      * @return 是否包含参数名为 commandName 的参数项
      */
@@ -163,6 +164,7 @@ public class CommandGroup implements Iterable<CommandItem>, Cloneable {
 
     /**
      * 获取已注册的参数项
+     *
      * @param commandName 参数名
      * @return 获取参数项，为 null 说明不在该参数组中
      */
@@ -172,6 +174,7 @@ public class CommandGroup implements Iterable<CommandItem>, Cloneable {
 
     /**
      * 当前参数组包含的参数项个数
+     *
      * @return 参数项个数
      */
     public int size() {

@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
- * @author suranyi
+ * file 及其扩展类型
  */
 
 public enum FILE implements IType {
@@ -29,7 +29,13 @@ public enum FILE implements IType {
      * <p>
      * 转换格式: File[]
      */
-    ARRAY((Function<String[], File[]>) File::of, null, -1, "<file> <file> ..."),
+    ARRAY((Function<String[], File[]>) strings -> {
+        File[] values = new File[strings.length];
+        for (int i = 0; i < strings.length; i++) {
+            values[i] = convertToFile(strings[i]);
+        }
+        return values;
+    }, null, -1, "<file> <file> ..."),
 
     /**
      * set 值转换器
@@ -39,7 +45,7 @@ public enum FILE implements IType {
      * 转换格式: Set&lt;File&gt;
      */
     SET((Function<String[], Set<File>>) strings -> {
-        Set<File> values = new HashSet<>();
+        Set<File> values = new LinkedHashSet<>();
         for (String string : strings) {
             values.add(convertToFile(string));
         }
@@ -54,7 +60,7 @@ public enum FILE implements IType {
      * 转换格式: Map&lt;String, File&gt;
      */
     MAP((Function<String[], Map<String, File>>) strings -> {
-        Map<String, File> maps = new HashMap<>(strings.length);
+        Map<String, File> maps = new LinkedHashMap<>(strings.length);
         for (String string : strings) {
             if (string.length() > 0) {
                 int index = string.indexOf("=");
@@ -125,7 +131,7 @@ public enum FILE implements IType {
      * @return 文件验证器
      */
     public static IValidator validateWith(boolean checkIsExists) {
-        return validateWith(checkIsExists, false, false, false);
+        return validateWith(checkIsExists, false, false);
     }
 
     /**
@@ -136,7 +142,7 @@ public enum FILE implements IType {
      * @return 文件验证器
      */
     public static IValidator validateWith(boolean checkIsExists, boolean checkIsFile) {
-        return validateWith(checkIsExists, checkIsFile, false, false);
+        return validateWith(checkIsExists, checkIsFile, false);
     }
 
     /**
@@ -148,19 +154,6 @@ public enum FILE implements IType {
      * @return 文件验证器
      */
     public static IValidator validateWith(boolean checkIsExists, boolean checkIsFile, boolean checkIsDirectory) {
-        return validateWith(checkIsExists, checkIsFile, checkIsDirectory, false);
-    }
-
-    /**
-     * 值验证器
-     *
-     * @param checkIsExists      检查文件是否存在
-     * @param checkIsFile        检查是否为文件路径
-     * @param checkIsDirectory   检查是否为文件夹路径
-     * @param checkInnerResource 检查内部资源文件
-     * @return 文件验证器
-     */
-    public static IValidator validateWith(boolean checkIsExists, boolean checkIsFile, boolean checkIsDirectory, boolean checkInnerResource) {
         if (checkIsFile && checkIsDirectory) {
             throw new CommandParserException("illegal validator: checkIsFile and checkIsDirectory cannot both be true");
         }
@@ -170,32 +163,22 @@ public enum FILE implements IType {
             public Object validate(String commandKey, Object params) {
                 if (params instanceof File) {
                     File value = (File) params;
-                    if (checkInnerResource) {
-                        File innerFile = new File(value.getFilePath(), true);
-                        if (innerFile.isInnerResource()) {
-                            // 如果识别为了内部资源, 则使用此内部资源替代文件
-                            value = innerFile;
-
-                            // 此外, 无需对内部资源判断类型或存在与否
-                            return value;
-                        }
-                    }
 
                     if (checkIsExists) {
-                        if (!value.isExists()) {
-                            throw new ParameterException("no such file or directory (" + value.getFilePath() + ")");
+                        if (!value.exists()) {
+                            throw new ParameterException("no such file or directory (" + value.getPath() + ")");
                         }
                     }
 
                     if (checkIsFile) {
                         if (value.isDirectory()) {
-                            throw new ParameterException(value.getFilePath() + " is a directory (single file required)");
+                            throw new ParameterException(value.getPath() + " is a directory (single file required)");
                         }
                     }
 
                     if (checkIsDirectory) {
-                        if (value.isExists() && !value.isDirectory()) {
-                            throw new ParameterException(value.getFilePath() + " is not a directory");
+                        if (value.exists() && !value.isDirectory()) {
+                            throw new ParameterException(value.getPath() + " is not a directory");
                         }
                     }
                     return value;
@@ -204,30 +187,22 @@ public enum FILE implements IType {
                     File[] valuesParsed = new File[values.length];
                     int index = 0;
                     for (File value : values) {
-                        if (checkInnerResource) {
-                            File innerFile = new File(value.getFilePath(), true);
-                            if (innerFile.isInnerResource()) {
-                                // 如果识别为了内部资源, 则使用此内部资源替代文件
-                                valuesParsed[index++] = innerFile;
-                                continue;
-                            }
-                        }
 
                         if (checkIsExists) {
-                            if (!value.isExists()) {
-                                throw new ParameterException("no such file or directory (" + value.getFilePath() + ")");
+                            if (!value.exists()) {
+                                throw new ParameterException("no such file or directory (" + value.getPath() + ")");
                             }
                         }
 
                         if (checkIsFile) {
                             if (value.isDirectory()) {
-                                throw new ParameterException(value.getFilePath() + " is a directory (single file required)");
+                                throw new ParameterException(value.getPath() + " is a directory (single file required)");
                             }
                         }
 
                         if (checkIsDirectory) {
-                            if (value.isExists() && !value.isDirectory()) {
-                                throw new ParameterException(value.getFilePath() + " is not a directory");
+                            if (value.exists() && !value.isDirectory()) {
+                                throw new ParameterException(value.getPath() + " is not a directory");
                             }
                         }
 
@@ -237,32 +212,23 @@ public enum FILE implements IType {
                     return valuesParsed;
                 } else if (params instanceof Set<?>) {
                     Set<File> values = (Set<File>) params;
-                    Set<File> valuesParsed = new HashSet<>(values.size());
+                    Set<File> valuesParsed = new LinkedHashSet<>(values.size());
                     for (File value : values) {
-                        if (checkInnerResource) {
-                            File innerFile = new File(value.getFilePath(), true);
-                            if (innerFile.isInnerResource()) {
-                                // 如果识别为了内部资源, 则使用此内部资源替代文件
-                                valuesParsed.add(innerFile);
-                                continue;
-                            }
-                        }
-
                         if (checkIsExists) {
-                            if (!value.isExists()) {
-                                throw new ParameterException("no such file or directory (" + value.getFilePath() + ")");
+                            if (!value.exists()) {
+                                throw new ParameterException("no such file or directory (" + value.getPath() + ")");
                             }
                         }
 
                         if (checkIsFile) {
                             if (value.isDirectory()) {
-                                throw new ParameterException(value.getFilePath() + " is a directory (single file required)");
+                                throw new ParameterException(value.getPath() + " is a directory (single file required)");
                             }
                         }
 
                         if (checkIsDirectory) {
-                            if (value.isExists() && !value.isDirectory()) {
-                                throw new ParameterException(value.getFilePath() + " is not a directory");
+                            if (value.exists() && !value.isDirectory()) {
+                                throw new ParameterException(value.getPath() + " is not a directory");
                             }
                         }
 
@@ -272,33 +238,25 @@ public enum FILE implements IType {
                     return Collections.unmodifiableSet(valuesParsed);
                 } else if (params instanceof Map<?, ?>) {
                     Map<String, File> values = (Map<String, File>) params;
-                    Map<String, File> valuesParsed = new HashMap<>();
+                    Map<String, File> valuesParsed = new LinkedHashMap<>();
                     for (String key : values.keySet()) {
                         File value = values.get(key);
-                        if (checkInnerResource) {
-                            File innerFile = new File(value.getFilePath(), true);
-                            if (innerFile.isInnerResource()) {
-                                // 如果识别为了内部资源, 则使用此内部资源替代文件
-                                valuesParsed.put(key, innerFile);
-                                continue;
-                            }
-                        }
 
                         if (checkIsExists) {
-                            if (!value.isExists()) {
-                                throw new ParameterException("no such file or directory (" + value.getFilePath() + ")");
+                            if (!value.exists()) {
+                                throw new ParameterException("no such file or directory (" + value.getPath() + ")");
                             }
                         }
 
                         if (checkIsFile) {
                             if (value.isDirectory()) {
-                                throw new ParameterException(value.getFilePath() + " is a directory (single file required)");
+                                throw new ParameterException(value.getPath() + " is a directory (single file required)");
                             }
                         }
 
                         if (checkIsDirectory) {
-                            if (value.isExists() && !value.isDirectory()) {
-                                throw new ParameterException(value.getFilePath() + " is not a directory");
+                            if (value.exists() && !value.isDirectory()) {
+                                throw new ParameterException(value.getPath() + " is not a directory");
                             }
                         }
 
@@ -319,10 +277,8 @@ public enum FILE implements IType {
                     return checkIsFile;
                 } else if (key.equalsIgnoreCase("checkIsDirectory")) {
                     return checkIsDirectory;
-                } else if (key.equalsIgnoreCase("checkInnerResource")) {
-                    return checkInnerResource;
                 } else {
-                    throw new CommandParserException("attribute " + key + " not found (support: checkIsExists, checkIsFile, checkIsDirectory, checkInnerResource)");
+                    throw new CommandParserException("attribute " + key + " not found (support: checkIsExists, checkIsFile, checkIsDirectory)");
                 }
             }
 
@@ -342,9 +298,6 @@ public enum FILE implements IType {
                 }
                 if (checkIsDirectory) {
                     options.add("Directory");
-                }
-                if (checkInnerResource) {
-                    options.add("Inner");
                 }
                 return options.join(",");
             }

@@ -4,14 +4,13 @@ import edu.sysu.pmglab.commandParser.exception.CommandParserException;
 import edu.sysu.pmglab.commandParser.types.*;
 import edu.sysu.pmglab.commandParser.usage.DefaultStyleUsage;
 import edu.sysu.pmglab.container.array.StringArray;
-import edu.sysu.pmglab.easytools.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * @author suranyi
+ * 带有参数构造的命令行解析器生成文件构造器
  */
 
 public class CommandParserWithOptionsBuilder {
@@ -20,7 +19,7 @@ public class CommandParserWithOptionsBuilder {
     final String className;
 
     private final static Pattern CLASS_NAME_RULE = Pattern.compile("(^[a-zA-Z]+[0-9a-zA-Z_]*(\\.[a-zA-Z]+[0-9a-zA-Z_]*)*\\.[a-zA-Z]+[0-9a-zA-Z_]*$)");
-    private final static HashMap<IType, String> formatter = new HashMap<>();
+    private final static HashMap<IType, String> formatter = new LinkedHashMap<>();
 
     static {
         // 强制格式转换器
@@ -222,7 +221,7 @@ public class CommandParserWithOptionsBuilder {
         builder.append("import edu.sysu.pmglab.container.File;\n");
 
         // 导入类型包
-        HashSet<String> types = new HashSet<>();
+        HashSet<String> types = new LinkedHashSet<>();
         for (CommandItem item : this.parser) {
             // 扫描所有类型
             IType type = item.getConverter().getBaseValueType();
@@ -357,8 +356,7 @@ public class CommandParserWithOptionsBuilder {
             int groupIndex = 1;
             for (Iterator<CommandGroup> it = this.parser.groupIterator(); it.hasNext(); ) {
                 CommandGroup group = it.next();
-                String groupIndexString = String.valueOf(groupIndex);
-                String groupMark = "group" + StringUtils.copyN("0", 3 - groupIndexString.length()) + groupIndexString;
+                String groupMark = "group" + groupIndex;
                 builder.append("        CommandGroup " + groupMark + " = PARSER.addCommandGroup(\"" + group.getGroupName() + "\");\n");
                 for (CommandItem commandItem : group) {
                     addCommandItem(commandItem, builder, groupMark);
@@ -417,9 +415,7 @@ public class CommandParserWithOptionsBuilder {
             IValidator validator = commandItem.getValidator();
 
             if (converter.getBaseValueType().equals(FILE.VALUE)) {
-                if ((boolean) validator.get("checkInnerResource")) {
-                    builder.append("\n                .validateWith(FILE.validateWith(" + validator.get("checkIsExists") + ", " + validator.get("checkIsFile") + ", " + validator.get("checkIsDirectory") + ", " + validator.get("checkInnerResource") + "))");
-                } else if ((boolean) validator.get("checkIsDirectory")) {
+                 if ((boolean) validator.get("checkIsDirectory")) {
                     builder.append("\n                .validateWith(FILE.validateWith(" + validator.get("checkIsExists") + ", " + validator.get("checkIsFile") + ", " + validator.get("checkIsDirectory") + "))");
                 } else if ((boolean) validator.get("checkIsFile")) {
                     builder.append("\n                .validateWith(FILE.validateWith(" + validator.get("checkIsExists") + ", " + validator.get("checkIsFile") + "))");
@@ -541,7 +537,15 @@ public class CommandParserWithOptionsBuilder {
         if (commandName.startsWith("_")) {
             commandName = commandName.substring(1);
         }
-        return StringArray.wrap(commandName.toLowerCase().split("_")).reduce(stringStringPair -> stringStringPair.key + stringStringPair.value.substring(0, 1).toUpperCase() + stringStringPair.value.substring(1));
+
+        StringArray splitNames = (StringArray) StringArray.wrap(commandName.toLowerCase().split("_")).filter(name -> name.length() > 0);
+        StringBuilder name = new StringBuilder();
+        name.append(splitNames.get(0));
+        for (int i = 1; i < splitNames.size(); i++) {
+            name.append(splitNames.get(i).substring(0, 1).toUpperCase() + splitNames.get(i).substring(1));
+        }
+
+        return name.toString();
     }
 
     void generateOtherMethods(StringBuilder builder) {

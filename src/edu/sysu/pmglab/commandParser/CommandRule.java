@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * @author suranyi
+ * 参数规则
  */
 
 public class CommandRule implements Iterable<String> {
@@ -94,7 +94,7 @@ public class CommandRule implements Iterable<String> {
         } else {
             throw new CommandParserException("syntax error: rule type only support one of " + DEPENDENT_VALIDATOR);
         }
-        this.commands = commands.clone();
+        this.commands = (StringArray) commands.clone();
     }
 
     /**
@@ -144,7 +144,7 @@ public class CommandRule implements Iterable<String> {
         } else {
             throw new CommandParserException("syntax error: rule type only support one of " + NUMBER_VALIDATOR);
         }
-        this.commands = commands.clone();
+        this.commands = (StringArray) commands.clone();
     }
 
     @Override
@@ -165,7 +165,7 @@ public class CommandRule implements Iterable<String> {
      * @return 参数名
      */
     public StringArray getCommands() {
-        return this.commands.clone();
+        return (StringArray) this.commands.clone();
     }
 
     /**

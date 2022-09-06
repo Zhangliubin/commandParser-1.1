@@ -1,7 +1,7 @@
 package edu.sysu.pmglab.commandParser.exception;
 
 /**
- * @author suranyi
+ * 解析器设置异常
  */
 
 public class CommandParserException extends RuntimeException {

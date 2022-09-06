@@ -96,5 +96,5 @@
 | None, Boolean                                           | 不支持使用验证器。                                           |
 | Byte, Short, Integer, Long, Float, Double<br />数值类型 | 数值范围验证器:<br />1. 范围 (包含边界值): 最小值 ∼ 最大值;<br />2. 指定最小值: ≥ 最小值。 |
 | String<br />字符串类型                                  | 限定值验证器 (只能取指定的元素):<br />多个限定值使用空格分隔，Ignore Case 忽略大小写，Index Access 允许使用索引访问 (0 代表第一个限定值…)。 |
-| File<br />文件类型                                      | 文件验证器<br />File Exists 文件路径必须存在;<br />Single File 文件路径不能指向文件夹;<br />Directory 文件路径必须指向文件夹;<br />Inner Resource 优先识别当前运行环境资源 (允许访问 jar 包内部文件)。 |
+| File<br />文件类型                                      | 文件验证器<br />File Exists 文件路径必须存在;<br />Single File 文件路径不能指向文件夹;<br />Directory 文件路径必须指向文件夹 |
 

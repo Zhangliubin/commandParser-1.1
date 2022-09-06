@@ -57,7 +57,7 @@
             "copyright":"Copyright ©张柳彬 all right reserved",
             "modify_label": "文档修订时间: ",
             "modify_format": "YYYY-MM-DD HH:mm:ss",
-            "hide": true
+            "hide": false
         },
         "hide-element": {
             "elements": [
@@ -95,7 +95,7 @@
             "grid-columns": 2
         },
         "get-pdf": {
-            "base": "http://pmglab.top/commandParser/assets/",
+        	"base": "https://github.com/Zhangliubin/commandParser/tree/main/assets",
             "prefix": "UsageManual",
             "label": ""
         },

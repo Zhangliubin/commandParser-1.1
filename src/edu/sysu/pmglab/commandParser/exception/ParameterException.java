@@ -1,7 +1,7 @@
 package edu.sysu.pmglab.commandParser.exception;
 
 /**
- * @author suranyi
+ * 参数设置异常
  */
 
 public class ParameterException extends RuntimeException {

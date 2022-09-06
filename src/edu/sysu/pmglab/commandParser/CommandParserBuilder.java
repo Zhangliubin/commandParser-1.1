@@ -4,7 +4,6 @@ import edu.sysu.pmglab.commandParser.exception.CommandParserException;
 import edu.sysu.pmglab.commandParser.types.*;
 import edu.sysu.pmglab.commandParser.usage.DefaultStyleUsage;
 import edu.sysu.pmglab.container.array.StringArray;
-import edu.sysu.pmglab.easytools.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,7 +12,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * @author suranyi
+ * 命令行解析器生成文件构造器
  */
 
 public class CommandParserBuilder {
@@ -198,8 +197,7 @@ public class CommandParserBuilder {
             int groupIndex = 1;
             for (Iterator<CommandGroup> it = this.parser.groupIterator(); it.hasNext(); ) {
                 CommandGroup group = it.next();
-                String groupIndexString = String.valueOf(groupIndex);
-                String groupMark = "group" + StringUtils.copyN("0", 3 - groupIndexString.length()) + groupIndexString;
+                String groupMark = "group" + groupIndex;
                 builder.append("        CommandGroup " + groupMark + " = parser.addCommandGroup(\"" + group.getGroupName() + "\");\n");
                 for (CommandItem commandItem : group) {
                     addCommandItem(commandItem, builder, groupMark);
@@ -258,9 +256,7 @@ public class CommandParserBuilder {
             IValidator validator = commandItem.getValidator();
 
             if (converter.getBaseValueType().equals(FILE.VALUE)) {
-                if ((boolean) validator.get("checkInnerResource")) {
-                    builder.append("\n                .validateWith(FILE.validateWith(" + validator.get("checkIsExists") + ", " + validator.get("checkIsFile") + ", " + validator.get("checkIsDirectory") + ", " + validator.get("checkInnerResource") + "))");
-                } else if ((boolean) validator.get("checkIsDirectory")) {
+                if ((boolean) validator.get("checkIsDirectory")) {
                     builder.append("\n                .validateWith(FILE.validateWith(" + validator.get("checkIsExists") + ", " + validator.get("checkIsFile") + ", " + validator.get("checkIsDirectory") + "))");
                 } else if ((boolean) validator.get("checkIsFile")) {
                     builder.append("\n                .validateWith(FILE.validateWith(" + validator.get("checkIsExists") + ", " + validator.get("checkIsFile") + "))");

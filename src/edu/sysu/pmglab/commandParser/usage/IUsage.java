@@ -2,10 +2,8 @@ package edu.sysu.pmglab.commandParser.usage;
 
 import edu.sysu.pmglab.commandParser.CommandGroup;
 
-import java.io.Serializable;
-
 /**
- * @author suranyi
+ * 文本格式化接口
  */
 
 public interface IUsage {
@@ -30,6 +28,7 @@ public interface IUsage {
 
     /**
      * 格式化标题行
+     *
      * @param programName 程序名
      * @return 标题行格式化结果
      */

@@ -6,9 +6,8 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
- * @author suranyi
+ * boolean 及其扩展类型
  */
-
 public enum BOOLEAN implements IType {
     /**
      * 值转换器
@@ -61,7 +60,7 @@ public enum BOOLEAN implements IType {
      * 转换格式: Set&lt;Boolean&gt;
      */
     SET((Function<String[], Set<Boolean>>) strings -> {
-        Set<Boolean> values = new HashSet<>(2);
+        Set<Boolean> values = new LinkedHashSet<>(2);
         for (String string : strings) {
             values.add(convertToBoolean(string));
         }
@@ -94,7 +93,7 @@ public enum BOOLEAN implements IType {
      * 转换格式: Map&lt;String, Boolean&gt;
      */
     MAP((Function<String[], Map<String, Boolean>>) strings -> {
-        Map<String, Boolean> maps = new HashMap<>(strings.length);
+        Map<String, Boolean> maps = new LinkedHashMap<>(strings.length);
         for (String string : strings) {
             if (string.length() > 0) {
                 String[] groups = string.split("=", -1);
@@ -139,7 +138,7 @@ public enum BOOLEAN implements IType {
      * 转换格式: Map&lt;String, boolean[]&gt;
      */
     LABEL_ARRAY((Function<String[], Map<String, boolean[]>>) strings -> {
-        Map<String, boolean[]> values = new HashMap<>(strings.length);
+        Map<String, boolean[]> values = new LinkedHashMap<>(strings.length);
 
         for (String string : strings) {
             String[] groups = string.split(":", -1);

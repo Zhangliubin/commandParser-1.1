@@ -146,7 +146,7 @@ CommandGroup group002 = parser.addCommandGroup("Options");
 | None, BOOLEAN                                           | 不支持使用验证器。                                           |
 | BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE<br />数值类型 | 类型.validateWith(最小值, 最大值)<br />类型.validateWith(最小值) |
 | STRING<br />字符串类型                                  | STRING.validateWith(String... elements)<br />STRING.validateWith(boolean ignoreCase, final boolean indexAccess,  String... elements)<br /><br />允许设置多个限定值，Ignore Case 忽略大小写，Index Access 允许使用索引访问 (0 代表第一个限定值…)。 |
-| FILE<br />文件类型                                      | FILE.validateWith(boolean checkIsExists, boolean checkIsFile, boolean checkIsDirectory, boolean checkInnerResource)<br /><br />checkIsExists 文件路径必须存在;<br />checkIsFile 文件路径不能指向文件夹;<br />checkIsDirectory 文件路径必须指向文件夹;<br />checkInnerResource 优先识别当前运行环境资源 (允许访问 jar 包内部文件)。 |
+| FILE<br />文件类型                                      | FILE.validateWith(boolean checkIsExists, boolean checkIsFile, boolean checkIsDirectory, boolean)<br />checkIsExists 文件路径必须存在;<br />checkIsFile 文件路径不能指向文件夹;<br />checkIsDirectory 文件路径必须指向文件夹 |
 
 - CommandItem item = item.setFormat(String format)
 

@@ -10,7 +10,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
- * @author suranyi
+ * string 及其扩展类型
  */
 
 public enum STRING implements IType {
@@ -65,7 +65,7 @@ public enum STRING implements IType {
      * 转换格式: Set&lt;String&gt;
      */
     SET((Function<String[], Set<String>>) strings -> {
-        HashSet<String> values = new HashSet<>(2);
+        HashSet<String> values = new LinkedHashSet<>(2);
         for (String string : strings) {
             values.add(convertToString(string));
         }
@@ -98,7 +98,7 @@ public enum STRING implements IType {
      * 转换格式: Map&lt;String, String&gt;
      */
     MAP((Function<String[], Map<String, String>>) strings -> {
-        Map<String, String> maps = new HashMap<>(strings.length);
+        Map<String, String> maps = new LinkedHashMap<>(strings.length);
         for (String string : strings) {
             if (string.length() > 0) {
                 int index = string.indexOf("=");
@@ -160,7 +160,7 @@ public enum STRING implements IType {
      * 转换格式: Map&lt;String, String[]&gt;
      */
     LABEL_RANGE((Function<String[], Map<String, String[]>>) strings -> {
-        Map<String, String[]> values = new HashMap<>(strings.length);
+        Map<String, String[]> values = new LinkedHashMap<>(strings.length);
 
         for (String string : strings) {
             String[] groups = string.split(":", -1);
@@ -203,7 +203,7 @@ public enum STRING implements IType {
      * 转换格式: Map&lt;String, String[]&gt;
      */
     LABEL_ARRAY((Function<String[], Map<String, String[]>>) strings -> {
-        Map<String, String[]> values = new HashMap<>(strings.length);
+        Map<String, String[]> values = new LinkedHashMap<>(strings.length);
 
         for (String string : strings) {
             String[] groups = string.split(":", -1);
@@ -298,6 +298,7 @@ public enum STRING implements IType {
      * @param elements    支持的元素值
      * @return 可取值验证器
      */
+    @SuppressWarnings("unchecked")
     public static IValidator validateWith(boolean ignoreCase, boolean indexAccess, String... elements) {
         if (elements == null || elements.length == 0) {
             throw new CommandParserException("illegal validator parameters (elements is empty)");
@@ -325,7 +326,7 @@ public enum STRING implements IType {
                     }
                     return parsed;
                 } else if (params instanceof Set<?>) {
-                    HashSet<String> parsed = new HashSet<>();
+                    HashSet<String> parsed = new LinkedHashSet<>();
                     for (String param : (Set<String>) params) {
                         parsed.add(convertValue(commandKey, param));
                     }
@@ -345,7 +346,7 @@ public enum STRING implements IType {
                         }
 
                         if (array) {
-                            HashMap<String, String[]> parsed = new HashMap<>();
+                            HashMap<String, String[]> parsed = new LinkedHashMap<>();
                             for (String key : values.keySet()) {
                                 int index = 0;
                                 String[] newStringArray = new String[((String[]) values.get(key)).length];
@@ -359,7 +360,7 @@ public enum STRING implements IType {
                             }
                             return Collections.unmodifiableMap(parsed);
                         } else {
-                            HashMap<String, String> parsed = new HashMap<>();
+                            HashMap<String, String> parsed = new LinkedHashMap<>();
                             for (String key : values.keySet()) {
                                 String parsedValue = convertValue(commandKey, (String) values.get(key));
                                 parsed.put(key, parsedValue);
@@ -426,7 +427,7 @@ public enum STRING implements IType {
                 String values = StringArray.wrap(elements).join("/");
 
                 if (indexAccess) {
-                    String[] range = new Range(0, elements.length, 1).toStringArray();
+                    String[] range = new Range<>(0, elements.length - 1, 1).toStringArray();
                     String indexes = StringArray.wrap(range).join("/");
                     return "[" + values + "] or [" + indexes + "]" + (ignoreCase ? " (ignoreCase)" : "");
                 } else {

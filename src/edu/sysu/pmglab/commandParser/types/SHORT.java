@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
- * @author suranyi
+ * short 及其扩展类型
  */
 
 public enum SHORT implements IType {
@@ -63,7 +63,7 @@ public enum SHORT implements IType {
      * 转换格式: Set&lt;Short&gt;
      */
     SET((Function<String[], Set<Short>>) strings -> {
-        Set<Short> values = new HashSet<>(2);
+        Set<Short> values = new LinkedHashSet<>(2);
         for (String string : strings) {
             values.add(convertToShort(string));
         }
@@ -96,7 +96,7 @@ public enum SHORT implements IType {
      * 转换格式: Map&lt;String, Short&gt;
      */
     MAP((Function<String[], Map<String, Short>>) strings -> {
-        Map<String, Short> maps = new HashMap<>(strings.length);
+        Map<String, Short> maps = new LinkedHashMap<>(strings.length);
         for (String string : strings) {
             if (string.length() > 0) {
                 String[] groups = string.split("=", -1);
@@ -192,7 +192,7 @@ public enum SHORT implements IType {
      * 转换格式: Map&lt;String, short[]&gt;
      */
     LABEL_RANGE((Function<String[], Map<String, short[]>>) strings -> {
-        Map<String, short[]> values = new HashMap<>(strings.length);
+        Map<String, short[]> values = new LinkedHashMap<>(strings.length);
 
         for (String string : strings) {
             String[] groups = string.split(":", -1);
@@ -240,7 +240,7 @@ public enum SHORT implements IType {
      * 转换格式: Map&lt;String, short[]&gt;
      */
     LABEL_ARRAY((Function<String[], Map<String, short[]>>) strings -> {
-        Map<String, short[]> values = new HashMap<>(strings.length);
+        Map<String, short[]> values = new LinkedHashMap<>(strings.length);
 
         for (String string : strings) {
             String[] groups = string.split(":", -1);

@@ -1,10 +1,10 @@
 package edu.sysu.pmglab.commandParser.types;
 
 import edu.sysu.pmglab.commandParser.exception.ParameterException;
-import edu.sysu.pmglab.container.array.BaseArray;
+import edu.sysu.pmglab.container.array.Array;
 
 /**
- * @author suranyi
+ * 类型接口
  */
 
 public interface IType {
@@ -103,7 +103,7 @@ public interface IType {
             case "NONE":
                 return new String[]{};
             case "BOOLEAN":
-                return BaseArray.wrap(BOOLEAN.values()).apply(subType -> {
+                return Array.wrap(BOOLEAN.values()).apply(subType -> {
                     String subTypeName = subType.toString();
                     int index = subTypeName.indexOf("_");
                     if (index == -1) {
@@ -113,7 +113,7 @@ public interface IType {
                     }
                 }).toArray(new String[0]);
             case "BYTE":
-                return BaseArray.wrap(BYTE.values()).apply(subType -> {
+                return Array.wrap(BYTE.values()).apply(subType -> {
                     String subTypeName = subType.toString();
                     int index = subTypeName.indexOf("_");
                     if (index == -1) {
@@ -123,7 +123,7 @@ public interface IType {
                     }
                 }).toArray(new String[0]);
             case "SHORT":
-                return BaseArray.wrap(SHORT.values()).apply(subType -> {
+                return Array.wrap(SHORT.values()).apply(subType -> {
                     String subTypeName = subType.toString();
                     int index = subTypeName.indexOf("_");
                     if (index == -1) {
@@ -133,7 +133,7 @@ public interface IType {
                     }
                 }).toArray(new String[0]);
             case "INTEGER":
-                return BaseArray.wrap(INTEGER.values()).apply(subType -> {
+                return Array.wrap(INTEGER.values()).apply(subType -> {
                     String subTypeName = subType.toString();
                     int index = subTypeName.indexOf("_");
                     if (index == -1) {
@@ -143,7 +143,7 @@ public interface IType {
                     }
                 }).toArray(new String[0]);
             case "LONG":
-                return BaseArray.wrap(LONG.values()).apply(subType -> {
+                return Array.wrap(LONG.values()).apply(subType -> {
                     String subTypeName = subType.toString();
                     int index = subTypeName.indexOf("_");
                     if (index == -1) {
@@ -153,7 +153,7 @@ public interface IType {
                     }
                 }).toArray(new String[0]);
             case "FLOAT":
-                return BaseArray.wrap(FLOAT.values()).apply(subType -> {
+                return Array.wrap(FLOAT.values()).apply(subType -> {
                     String subTypeName = subType.toString();
                     int index = subTypeName.indexOf("_");
                     if (index == -1) {
@@ -163,7 +163,7 @@ public interface IType {
                     }
                 }).toArray(new String[0]);
             case "DOUBLE":
-                return BaseArray.wrap(DOUBLE.values()).apply(subType -> {
+                return Array.wrap(DOUBLE.values()).apply(subType -> {
                     String subTypeName = subType.toString();
                     int index = subTypeName.indexOf("_");
                     if (index == -1) {
@@ -173,7 +173,7 @@ public interface IType {
                     }
                 }).toArray(new String[0]);
             case "STRING":
-                return BaseArray.wrap(STRING.values()).apply(subType -> {
+                return Array.wrap(STRING.values()).apply(subType -> {
                     String subTypeName = subType.toString();
                     int index = subTypeName.indexOf("_");
                     if (index == -1) {
@@ -183,7 +183,7 @@ public interface IType {
                     }
                 }).toArray(new String[0]);
             case "FILE":
-                return BaseArray.wrap(FILE.values()).apply(subType -> {
+                return Array.wrap(FILE.values()).apply(subType -> {
                     String subTypeName = subType.toString();
                     int index = subTypeName.indexOf("_");
                     if (index == -1) {

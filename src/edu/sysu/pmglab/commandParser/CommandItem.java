@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * @author suranyi
+ * 参数项目
  */
 
 public class CommandItem implements Iterable<String>, Cloneable {
@@ -24,7 +24,7 @@ public class CommandItem implements Iterable<String>, Cloneable {
     /**
      * 权限值
      */
-    private final HashSet<String> options = new HashSet<>(4);
+    private final HashSet<String> options = new LinkedHashSet<>(4);
 
     /**
      * 验证器
@@ -39,7 +39,7 @@ public class CommandItem implements Iterable<String>, Cloneable {
     /**
      * 允许的参数名规则
      */
-    private final static Pattern COMMAND_NAME_RULE = Pattern.compile("(^[a-zA-Z0-9+_\\-]+$)");
+    private final static Pattern COMMAND_NAME_RULE = Pattern.compile("(^[a-zA-Z0-9+_\\.\\-]+$)");
 
     /**
      * 必备参数
@@ -260,7 +260,7 @@ public class CommandItem implements Iterable<String>, Cloneable {
                     throw new CommandParserException("syntax error: defaultValue cannot be null");
                 }
 
-                if (value.length() == 0 || value.contains(" ") || value.contains("\t") || value.contains("\n")) {
+                if (value.length() == 0) {
                     throw new CommandParserException("syntax error: " + value + " is not a legal parameter (is empty, or contains a blank value)");
                 }
             }
@@ -594,7 +594,7 @@ public class CommandItem implements Iterable<String>, Cloneable {
         }
 
         for (String param : params) {
-            if (param == null || param.length() == 0 || param.contains(" ") || param.contains("\t") || param.contains("\n")) {
+            if (param == null || param.length() == 0 || param.contains("\t") || param.contains("\n")) {
                 throw new ParameterException(param + " is not a legal parameter (is empty, or contains a blank value)");
             }
         }

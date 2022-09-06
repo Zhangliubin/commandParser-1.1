@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
- * @author suranyi
+ * byte 及其扩展类型
  */
 
 public enum BYTE implements IType {
@@ -63,7 +63,7 @@ public enum BYTE implements IType {
      * 转换格式: Set&lt;Byte&gt;
      */
     SET((Function<String[], Set<Byte>>) strings -> {
-        Set<Byte> values = new HashSet<>(2);
+        Set<Byte> values = new LinkedHashSet<>(2);
         for (String string : strings) {
             values.add(convertToByte(string));
         }
@@ -96,7 +96,7 @@ public enum BYTE implements IType {
      * 转换格式: Map&lt;String, Byte&gt;
      */
     MAP((Function<String[], Map<String, Byte>>) strings -> {
-        Map<String, Byte> maps = new HashMap<>(strings.length);
+        Map<String, Byte> maps = new LinkedHashMap<>(strings.length);
         for (String string : strings) {
             if (string.length() > 0) {
                 String[] groups = string.split("=", -1);
@@ -192,7 +192,7 @@ public enum BYTE implements IType {
      * 转换格式: Map&lt;String, byte[]&gt;
      */
     LABEL_RANGE((Function<String[], Map<String, byte[]>>) strings -> {
-        Map<String, byte[]> values = new HashMap<>(strings.length);
+        Map<String, byte[]> values = new LinkedHashMap<>(strings.length);
 
         for (String string : strings) {
             String[] groups = string.split(":", -1);
@@ -236,7 +236,7 @@ public enum BYTE implements IType {
      * 转换格式: Map&lt;String, byte[]&gt;
      */
     LABEL_ARRAY((Function<String[], Map<String, byte[]>>) strings -> {
-        Map<String, byte[]> values = new HashMap<>(strings.length);
+        Map<String, byte[]> values = new LinkedHashMap<>(strings.length);
 
         for (String string : strings) {
             String[] groups = string.split(":", -1);

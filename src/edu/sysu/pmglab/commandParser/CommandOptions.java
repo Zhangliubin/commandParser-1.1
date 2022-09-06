@@ -1,24 +1,20 @@
 package edu.sysu.pmglab.commandParser;
 
 import edu.sysu.pmglab.commandParser.exception.CommandParserException;
-import edu.sysu.pmglab.container.BiDict;
+import edu.sysu.pmglab.container.TrieTree;
 import edu.sysu.pmglab.container.array.StringArray;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * @author suranyi
+ * 参数解析列表
  */
 
 public class CommandOptions {
-    /**
-     * 参数解析列表
-     */
-    private final Map<String, Object> values = new HashMap<>();
-    private final StringArray matchedParameters = new StringArray();
-    private final BiDict<String, Integer> matchedParameterIndexes = new BiDict<>();
+    private final Map<String, Object> values = new LinkedHashMap<>();
+    private final Map<String, String> matchedParameters = new LinkedHashMap<>();
     private final CommandParser parser;
     private final boolean help;
 
@@ -49,8 +45,7 @@ public class CommandOptions {
             this.values.put(commandName, commandItem.getDefaultValue());
         } else {
             this.values.put(commandName, commandItem.parseValue(args));
-            this.matchedParameters.add(StringArray.wrap(args).join(" "));
-            this.matchedParameterIndexes.put(commandName, this.matchedParameters.size() - 1);
+            this.matchedParameters.put(commandName, StringArray.wrap(args).join(" "));
         }
     }
 
@@ -61,27 +56,7 @@ public class CommandOptions {
      * @return 捕捉值
      */
     public String getMatchedParameter(String commandName) {
-        int index = this.matchedParameterIndexes.valueOfOrDefault(getMainCommandName(commandName), -1);
-        if (index == -1) {
-            return null;
-        } else {
-            return this.matchedParameters.get(index);
-        }
-    }
-
-    /**
-     * 获取指令捕捉的参数值 (内部方法, 不校验)
-     *
-     * @param commandItem 参数名
-     * @return 捕捉值
-     */
-    String getMatchedParameter(CommandItem commandItem) {
-        int index = this.matchedParameterIndexes.valueOfOrDefault(commandItem.getCommandName(), -1);
-        if (index == -1) {
-            return null;
-        } else {
-            return this.matchedParameters.get(index);
-        }
+        return this.matchedParameters.getOrDefault(commandName, null);
     }
 
     /**
@@ -153,14 +128,27 @@ public class CommandOptions {
 
     @Override
     public String toString() {
-        if (matchedParameters.size() == 0) {
+        if (this.matchedParameters.size() == 0) {
             return "";
         } else {
             StringArray links = new StringArray();
-            for (int i = 0; i < this.matchedParameters.size(); i++) {
-                links.add(this.matchedParameterIndexes.keyOf(i) + " " + this.matchedParameters.get(i));
+            for (String commandName : this.matchedParameters.keySet()) {
+                links.add(commandName + " " + this.matchedParameters.get(commandName));
             }
             return links.join(" \\\n");
         }
+    }
+
+    /**
+     * 转为参数前缀树
+     *
+     * @return 参数前缀树
+     */
+    public TrieTree<Object> toTripTree() {
+        TrieTree<Object> tree = new TrieTree<>();
+        for (Map.Entry<String, Object> entry : this.values.entrySet()) {
+            tree.add(entry.getKey(), entry.getValue());
+        }
+        return tree;
     }
 }

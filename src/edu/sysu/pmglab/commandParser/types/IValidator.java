@@ -1,7 +1,7 @@
 package edu.sysu.pmglab.commandParser.types;
 
 /**
- * @author suranyi
+ * 验证器接口
  */
 
 public interface IValidator {

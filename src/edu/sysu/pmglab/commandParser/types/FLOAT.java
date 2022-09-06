@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
- * @author suranyi
+ * float 及其扩展类型
  */
 
 public enum FLOAT implements IType {
@@ -63,7 +63,7 @@ public enum FLOAT implements IType {
      * 转换格式: Set&lt;Float&gt;
      */
     SET((Function<String[], Set<Float>>) strings -> {
-        Set<Float> values = new HashSet<>(2);
+        Set<Float> values = new LinkedHashSet<>(2);
         for (String string : strings) {
             values.add(convertToFloat(string));
         }
@@ -96,7 +96,7 @@ public enum FLOAT implements IType {
      * 转换格式: Map&lt;String, Float&gt;
      */
     MAP((Function<String[], Map<String, Float>>) strings -> {
-        Map<String, Float> maps = new HashMap<>(strings.length);
+        Map<String, Float> maps = new LinkedHashMap<>(strings.length);
         for (String string : strings) {
             if (string.length() > 0) {
                 String[] groups = string.split("=", -1);
@@ -197,7 +197,7 @@ public enum FLOAT implements IType {
      * 转换格式: Map&lt;String, float[]&gt;
      */
     LABEL_RANGE((Function<String[], Map<String, float[]>>) strings -> {
-        Map<String, float[]> values = new HashMap<>(strings.length);
+        Map<String, float[]> values = new LinkedHashMap<>(strings.length);
 
         for (String string : strings) {
             String[] groups = string.split(":", -1);
@@ -240,7 +240,7 @@ public enum FLOAT implements IType {
      * 转换格式: Map&lt;String, float[]&gt;
      */
     LABEL_ARRAY((Function<String[], Map<String, float[]>>) strings -> {
-        Map<String, float[]> values = new HashMap<>(strings.length);
+        Map<String, float[]> values = new LinkedHashMap<>(strings.length);
 
         for (String string : strings) {
             String[] groups = string.split(":", -1);

@@ -5,6 +5,7 @@
       <element id="archive" name="commandParser-1.1.jar">
         <element id="module-output" name="commandParser-1.1" />
       </element>
+      <element id="library" level="project" name="utils" />
     </root>
   </artifact>
 </component>
