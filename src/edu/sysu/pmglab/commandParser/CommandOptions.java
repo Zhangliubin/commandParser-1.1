@@ -146,7 +146,7 @@ public class CommandOptions {
      */
     public TrieTree<Object> toTripTree() {
         TrieTree<Object> tree = new TrieTree<>();
-        for (Map.Entry<String, Object> entry : this.values.entrySet()) {
+        for (Map.Entry<String, String> entry : this.matchedParameters.entrySet()) {
             tree.add(entry.getKey(), entry.getValue());
         }
         return tree;
