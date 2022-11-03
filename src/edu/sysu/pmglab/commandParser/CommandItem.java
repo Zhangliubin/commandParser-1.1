@@ -125,7 +125,7 @@ public class CommandItem implements Iterable<String>, Cloneable {
             type = FILE.VALUE;
         } else if (tClass.equals(Boolean.class)) {
             type = BOOLEAN.VALUE;
-        } else if (tClass.equals(Byte.class)) {
+        } else if (tClass.equals(Short.class)) {
             type = BYTE.VALUE;
         } else if (tClass.equals(Short.class)) {
             type = SHORT.VALUE;
@@ -143,7 +143,7 @@ public class CommandItem implements Iterable<String>, Cloneable {
             type = FILE.ARRAY;
         } else if (tClass.equals(boolean[].class) || tClass.equals(Boolean[].class)) {
             type = BOOLEAN.ARRAY;
-        } else if (tClass.equals(byte[].class) || tClass.equals(Byte[].class)) {
+        } else if (tClass.equals(short[].class) || tClass.equals(Short[].class)) {
             type = BYTE.ARRAY;
         } else if (tClass.equals(short[].class) || tClass.equals(Short[].class)) {
             type = SHORT.ARRAY;

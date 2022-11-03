@@ -2,7 +2,9 @@ package edu.sysu.pmglab.commandParser.types;
 
 import edu.sysu.pmglab.commandParser.exception.CommandParserException;
 import edu.sysu.pmglab.commandParser.exception.ParameterException;
+import edu.sysu.pmglab.container.Interval;
 import edu.sysu.pmglab.easytools.ArrayUtils;
+import edu.sysu.pmglab.easytools.Assert;
 
 import java.util.*;
 import java.util.function.Function;
@@ -77,6 +79,7 @@ public enum INTEGER implements IType {
      * <p>
      * 转换格式: Set&lt;Integer&gt;
      */
+    @SuppressWarnings("unchecked")
     SET_COMMA((Function<String[], Set<Integer>>) strings -> (Set<Integer>) SET.convert(strings[0].split(",")), null, 1, "<int>,<int>,..."),
 
     /**
@@ -86,6 +89,7 @@ public enum INTEGER implements IType {
      * <p>
      * 转换格式: Set&lt;Integer&gt;
      */
+    @SuppressWarnings("unchecked")
     SET_SEMICOLON((Function<String[], Set<Integer>>) strings -> (Set<Integer>) SET.convert(strings[0].split(";")), null, 1, "<int>;<int>;..."),
 
     /**
@@ -123,6 +127,7 @@ public enum INTEGER implements IType {
      * <p>
      * 转换格式: Map&lt;String, Integer&gt;
      */
+    @SuppressWarnings("unchecked")
     MAP_COMMA((Function<String[], Map<String, Integer>>) strings -> (Map<String, Integer>) MAP.convert(strings[0].split(",")), null, 1, "<string>=<int>,<string>=<int>,..."),
 
     /**
@@ -132,6 +137,7 @@ public enum INTEGER implements IType {
      * <p>
      * 转换格式: Map&lt;String, Integer&gt;
      */
+    @SuppressWarnings("unchecked")
     MAP_SEMICOLON((Function<String[], Map<String, Integer>>) strings -> (Map<String, Integer>) MAP.convert(strings[0].split(";")), null, 1, "<string>=<int>;<string>=<int>;..."),
 
     /**
@@ -139,60 +145,61 @@ public enum INTEGER implements IType {
      * <p>
      * 输入格式: &lt;int&gt;-&lt;int&gt;
      * <p>
-     * 转换格式: int[]
+     * 转换格式: Interval&lt;Integer&gt;
      */
-    RANGE((Function<String[], int[]>) strings -> {
+    RANGE((Function<String[], Interval<Integer>>) strings -> {
         int count = ArrayUtils.valueCounts(strings[0], '-');
         if (count == 1) {
             // v1-v2 型号
             String[] parsed = strings[0].split("-", -1);
-            return new int[]{parsed[0].length() == 0 ? Integer.MIN_VALUE : convertToInteger(parsed[0]),
-                    parsed[1].length() == 0 ? Integer.MAX_VALUE : convertToInteger(parsed[1])};
+            return new Interval<>(parsed[0].length() == 0 ? null : convertToInteger(parsed[0]),
+                    parsed[1].length() == 0 ? null : convertToInteger(parsed[1]));
         } else if (count == 2) {
             if (strings[0].length() == 2) {
                 // --
-                throw new ParameterException("unable convert -- to Integer-Integer");
+                throw new ParameterException("unable convert -- to <int>-<int>");
             }
 
             if (strings[0].charAt(0) == '-') {
                 if (strings[0].charAt(1) == '-') {
                     // --v1
-                    return new int[]{Integer.MIN_VALUE, convertToInteger(strings[0].substring(1))};
+                    return new Interval<>(null, convertToInteger(strings[0].substring(1)));
                 } else if (strings[0].charAt(strings[0].length() - 1) == '-') {
                     // -v1-
-                    return new int[]{convertToInteger(strings[0].substring(0, strings[0].length() - 1)), Integer.MAX_VALUE};
+                    return new Interval<>(convertToInteger(strings[0].substring(0, strings[0].length() - 1)), null);
                 } else {
                     // -v1-v2
                     int index = strings[0].indexOf('-', 1);
-                    return new int[]{convertToInteger(strings[0].substring(0, index)), convertToInteger(strings[0].substring(index + 1))};
+                    return new Interval<>(convertToInteger(strings[0].substring(0, index)), convertToInteger(strings[0].substring(index + 1)));
                 }
             } else {
                 // v1--v2
                 int index = strings[0].indexOf("--");
                 if (index != -1) {
-                    return new int[]{convertToInteger(strings[0].substring(0, index)), convertToInteger(strings[0].substring(index + 1))};
+                    return new Interval<>(convertToInteger(strings[0].substring(0, index)), convertToInteger(strings[0].substring(index + 1)));
                 }
             }
         } else if (count == 3 && strings[0].charAt(0) == '-' && strings[0].charAt(1) != '-') {
             // -v1--v2
             int index = strings[0].indexOf("--");
             if (index != -1) {
-                return new int[]{convertToInteger(strings[0].substring(0, index)), convertToInteger(strings[0].substring(index + 1))};
+                return new Interval<>(convertToInteger(strings[0].substring(0, index)), convertToInteger(strings[0].substring(index + 1)));
             }
         }
 
-        throw new ParameterException("unable convert " + strings[0] + " to Integer-Integer");
+        throw new ParameterException("unable convert " + strings[0] + " to <int>-<int>");
     }, null, 1, "<int>-<int>"),
 
     /**
-     * label-array 值转换器
+     * label-range 值转换器
      * <p>
      * 输入格式: &lt;string&gt;:&lt;int&gt;-&lt;int&gt; &lt;string&gt;:&lt;int&gt;-&lt;int&gt; ...
      * <p>
-     * 转换格式: Map&lt;String, int[]&gt;
+     * 转换格式: Map&lt;String, Interval&lt;Integer&gt;&gt;
      */
-    LABEL_RANGE((Function<String[], Map<String, int[]>>) strings -> {
-        Map<String, int[]> values = new LinkedHashMap<>(strings.length);
+    @SuppressWarnings("unchecked")
+    LABEL_RANGE((Function<String[], Map<String, Interval<Integer>>>) strings -> {
+        Map<String, Interval<Integer>> values = new LinkedHashMap<>(strings.length);
 
         for (String string : strings) {
             String[] groups = string.split(":", -1);
@@ -204,28 +211,31 @@ public enum INTEGER implements IType {
             if (values.containsKey(groups[0])) {
                 throw new ParameterException("key " + groups[0] + " is set repeatedly");
             }
-            values.put(groups[0], (int[]) RANGE.convert(groups[1]));
+
+            values.put(groups[0], (Interval<Integer>) RANGE.convert(groups[1]));
         }
         return Collections.unmodifiableMap(values);
     }, null, -1, "<string>:<int>-<int> <string>:<int>-<int> ..."),
 
     /**
-     * label-array 值转换器
+     * label-range 值转换器
      * <p>
      * 输入格式: &lt;string&gt;:&lt;int&gt;-&lt;int&gt;,&lt;string&gt;:&lt;int&gt;-&lt;int&gt;,...
      * <p>
-     * 转换格式: Map&lt;String, int[]&gt;
+     * 转换格式: Map&lt;String, Interval&lt;Integer&gt;&gt;
      */
-    LABEL_RANGE_COMMA((Function<String[], Map<String, int[]>>) strings -> (Map<String, int[]>) LABEL_RANGE.convert(strings[0].split(",")), null, 1, "<string>:<int>-<int>,<string>:<int>-<int>,..."),
+    @SuppressWarnings("unchecked")
+    LABEL_RANGE_COMMA((Function<String[], Map<String, Interval<Integer>>>) strings -> (Map<String, Interval<Integer>>) LABEL_RANGE.convert(strings[0].split(",")), null, 1, "<string>:<int>-<int>,<string>:<int>-<int>,..."),
 
     /**
-     * label-array 值转换器
+     * label-range 值转换器
      * <p>
      * 输入格式: &lt;string&gt;:&lt;int&gt;-&lt;int&gt;;&lt;string&gt;:&lt;int&gt;-&lt;int&gt;;...
      * <p>
-     * 转换格式: Map&lt;String, int[]&gt;
+     * 转换格式: Map&lt;String, Interval&lt;Integer&gt;&gt;
      */
-    LABEL_RANGE_SEMICOLON((Function<String[], Map<String, int[]>>) strings -> (Map<String, int[]>) LABEL_RANGE.convert(strings[0].split(";")), null, 1, "<string>:<int>-<int>;<string>:<int>-<int>;..."),
+    @SuppressWarnings("unchecked")
+    LABEL_RANGE_SEMICOLON((Function<String[], Map<String, Interval<Integer>>>) strings -> (Map<String, Interval<Integer>>) LABEL_RANGE.convert(strings[0].split(";")), null, 1, "<string>:<int>-<int>;<string>:<int>-<int>;..."),
 
     /**
      * label-array 值转换器
@@ -264,6 +274,7 @@ public enum INTEGER implements IType {
      * <p>
      * 转换格式: Map&lt;String, int[]&gt;
      */
+    @SuppressWarnings("unchecked")
     LABEL_ARRAY_SEMICOLON((Function<String[], Map<String, int[]>>) strings -> (Map<String, int[]>) LABEL_ARRAY.convert(strings[0].split(";")), null, 1, "<string>:<int>,<int>,...;<string>:<int>,<int>,...;...");
 
     private final Function<String[], ?> converter;
@@ -295,7 +306,7 @@ public enum INTEGER implements IType {
     }
 
     @Override
-    public IType getBaseValueType() {
+    public INTEGER getBaseValueType() {
         return INTEGER.VALUE;
     }
 
@@ -322,14 +333,18 @@ public enum INTEGER implements IType {
      * @return 数值范围验证器
      */
     public static IValidator validateWith(int minValue, int maxValue) {
+        Assert.that(minValue <= maxValue);
+
         return new IValidator() {
             @Override
+            @SuppressWarnings("unchecked")
             public Object validate(String commandKey, Object params) {
                 if (params instanceof Integer) {
                     int value = (int) params;
                     if (value < minValue || value > maxValue) {
                         throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
                     }
+                    return value;
                 } else if (params instanceof int[]) {
                     int[] values = (int[]) params;
                     for (int value : values) {
@@ -337,6 +352,7 @@ public enum INTEGER implements IType {
                             throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
                         }
                     }
+                    return values;
                 } else if (params instanceof Set<?>) {
                     Set<Integer> values = (Set<Integer>) params;
                     for (int value : values) {
@@ -344,25 +360,43 @@ public enum INTEGER implements IType {
                             throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
                         }
                     }
-                } else if (params instanceof Map<?, ?>) {
-                    Map<String, ?> values = (Map<String, ?>) params;
-                    for (Object value : values.values()) {
-                        if (value instanceof Integer) {
-                            if ((Integer) value < minValue || (Integer) value > maxValue) {
-                                throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
-                            }
-                        } else if (value instanceof int[]) {
-                            for (int v : (int[]) value) {
-                                if (v < minValue || v > maxValue) {
-                                    throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
-                                }
-                            }
+                    return values;
+                } else if (params instanceof Interval<?>) {
+                    Interval<Integer> values = (Interval<Integer>) params;
+                    if (values.nullity()) {
+                        throw new ParameterException("the interval " + values + " is invalid");
+                    }
+
+                    if (values.start() == null && values.end() == null) {
+                        values = new Interval<>(minValue, maxValue);
+                    } else if (values.start() == null) {
+                        if (values.end() > maxValue) {
+                            throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
+                        }
+
+                        values = new Interval<>(minValue, values.end());
+                    } else if (values.end() == null) {
+                        if (values.start() < minValue) {
+                            throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
+                        }
+
+                        values = new Interval<>(values.start(), maxValue);
+                    } else {
+                        if (values.start() < minValue || values.end() > maxValue) {
+                            throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
                         }
                     }
+                    return values;
+                } else if (params instanceof Map<?, ?>) {
+                    Map<String, ?> values = (Map<String, ?>) params;
+                    Map<String, Object> parsed = new LinkedHashMap<>();
+                    for (String key : values.keySet()) {
+                        parsed.put(commandKey, validate(commandKey, values.get(key)));
+                    }
+                    return parsed;
                 } else {
                     throw new ParameterException("unable to infer the value type of " + commandKey);
                 }
-                return params;
             }
 
             @Override
@@ -397,12 +431,14 @@ public enum INTEGER implements IType {
     public static IValidator validateWith(int minValue) {
         return new IValidator() {
             @Override
+            @SuppressWarnings("unchecked")
             public Object validate(String commandKey, Object params) {
                 if (params instanceof Integer) {
                     int value = (int) params;
                     if (value < minValue) {
                         throw new ParameterException(commandKey + " less than " + minValue);
                     }
+                    return value;
                 } else if (params instanceof int[]) {
                     int[] values = (int[]) params;
                     for (int value : values) {
@@ -410,6 +446,7 @@ public enum INTEGER implements IType {
                             throw new ParameterException(commandKey + " less than " + minValue);
                         }
                     }
+                    return values;
                 } else if (params instanceof Set<?>) {
                     Set<Integer> values = (Set<Integer>) params;
                     for (int value : values) {
@@ -417,25 +454,31 @@ public enum INTEGER implements IType {
                             throw new ParameterException(commandKey + " less than " + minValue);
                         }
                     }
-                } else if (params instanceof Map<?, ?>) {
-                    Map<String, ?> values = (Map<String, ?>) params;
-                    for (Object value : values.values()) {
-                        if (value instanceof Integer) {
-                            if ((Integer) value < minValue) {
-                                throw new ParameterException(commandKey + " less than " + minValue);
-                            }
-                        } else if (value instanceof int[]) {
-                            for (int v : (int[]) value) {
-                                if (v < minValue) {
-                                    throw new ParameterException(commandKey + " less than " + minValue);
-                                }
-                            }
+                    return values;
+                } else if (params instanceof Interval<?>) {
+                    Interval<Integer> values = (Interval<Integer>) params;
+                    if (values.nullity()) {
+                        throw new ParameterException("the interval " + values + " is invalid");
+                    }
+
+                    if (values.start() == null) {
+                        values = new Interval<>(minValue, values.end());
+                    } else {
+                        if (values.start() < minValue) {
+                            throw new ParameterException(commandKey + " < " + minValue);
                         }
                     }
+                    return values;
+                } else if (params instanceof Map<?, ?>) {
+                    Map<String, ?> values = (Map<String, ?>) params;
+                    Map<String, Object> parsed = new LinkedHashMap<>();
+                    for (String key : values.keySet()) {
+                        parsed.put(commandKey, validate(commandKey, values.get(key)));
+                    }
+                    return parsed;
                 } else {
                     throw new ParameterException("unable to infer the value type of " + commandKey);
                 }
-                return params;
             }
 
             @Override

@@ -2,7 +2,9 @@ package edu.sysu.pmglab.commandParser.types;
 
 import edu.sysu.pmglab.commandParser.exception.CommandParserException;
 import edu.sysu.pmglab.commandParser.exception.ParameterException;
+import edu.sysu.pmglab.container.Interval;
 import edu.sysu.pmglab.easytools.ArrayUtils;
+import edu.sysu.pmglab.easytools.Assert;
 
 import java.util.*;
 import java.util.function.Function;
@@ -77,6 +79,7 @@ public enum FLOAT implements IType {
      * <p>
      * 转换格式: Set&lt;Float&gt;
      */
+    @SuppressWarnings("unchecked")
     SET_COMMA((Function<String[], Set<Float>>) strings -> (Set<Float>) SET.convert(strings[0].split(",")), null, 1, "<float>,<float>,..."),
 
     /**
@@ -86,6 +89,7 @@ public enum FLOAT implements IType {
      * <p>
      * 转换格式: Set&lt;Float&gt;
      */
+    @SuppressWarnings("unchecked")
     SET_SEMICOLON((Function<String[], Set<Float>>) strings -> (Set<Float>) SET.convert(strings[0].split(";")), null, 1, "<float>;<float>;..."),
 
     /**
@@ -123,6 +127,7 @@ public enum FLOAT implements IType {
      * <p>
      * 转换格式: Map&lt;String, Float&gt;
      */
+    @SuppressWarnings("unchecked")
     MAP_COMMA((Function<String[], Map<String, Float>>) strings -> (Map<String, Float>) MAP.convert(strings[0].split(",")), null, 1, "<string>=<float>,<string>=<float>,..."),
 
     /**
@@ -132,6 +137,7 @@ public enum FLOAT implements IType {
      * <p>
      * 转换格式: Map&lt;String, Float&gt;
      */
+    @SuppressWarnings("unchecked")
     MAP_SEMICOLON((Function<String[], Map<String, Float>>) strings -> (Map<String, Float>) MAP.convert(strings[0].split(";")), null, 1, "<string>=<float>;<string>=<float>;..."),
 
     /**
@@ -141,7 +147,7 @@ public enum FLOAT implements IType {
      * <p>
      * 转换格式: float[]
      */
-    RANGE((Function<String[], float[]>) strings -> {
+    RANGE((Function<String[], Interval<Float>>) strings -> {
         if (strings[0].contains("e") || strings[0].contains("E")) {
             // 科学计数法中可能存在 -1e-5-1e-6 这类形式, 需要额外的分支逻辑,
             throw new ParameterException("unable to parse floating point numbers in scientific notation (i.e. containing 'e' or 'E')");
@@ -151,53 +157,54 @@ public enum FLOAT implements IType {
         if (count == 1) {
             // v1-v2 型号
             String[] parsed = strings[0].split("-", -1);
-            return new float[]{parsed[0].length() == 0 ? Float.NaN : convertToFloat(parsed[0]),
-                    parsed[1].length() == 0 ? Float.NaN : convertToFloat(parsed[1])};
+            return new Interval<>(parsed[0].length() == 0 ? null : convertToFloat(parsed[0]),
+                    parsed[1].length() == 0 ? null : convertToFloat(parsed[1]));
         } else if (count == 2) {
             if (strings[0].length() == 2) {
                 // --
-                throw new ParameterException("unable convert -- to Float-Float");
+                throw new ParameterException("unable convert -- to <float>-<float>");
             }
 
             if (strings[0].charAt(0) == '-') {
                 if (strings[0].charAt(1) == '-') {
                     // --v1
-                    return new float[]{Float.NaN, convertToFloat(strings[0].substring(1))};
+                    return new Interval<>(null, convertToFloat(strings[0].substring(1)));
                 } else if (strings[0].charAt(strings[0].length() - 1) == '-') {
                     // -v1-
-                    return new float[]{convertToFloat(strings[0].substring(0, strings[0].length() - 1)), Float.NaN};
+                    return new Interval<>(convertToFloat(strings[0].substring(0, strings[0].length() - 1)), null);
                 } else {
                     // -v1-v2
                     int index = strings[0].indexOf('-', 1);
-                    return new float[]{convertToFloat(strings[0].substring(0, index)), convertToFloat(strings[0].substring(index + 1))};
+                    return new Interval<>(convertToFloat(strings[0].substring(0, index)), convertToFloat(strings[0].substring(index + 1)));
                 }
             } else {
                 // v1--v2
                 int index = strings[0].indexOf("--");
                 if (index != -1) {
-                    return new float[]{convertToFloat(strings[0].substring(0, index)), convertToFloat(strings[0].substring(index + 1))};
+                    return new Interval<>(convertToFloat(strings[0].substring(0, index)), convertToFloat(strings[0].substring(index + 1)));
                 }
             }
         } else if (count == 3 && strings[0].charAt(0) == '-' && strings[0].charAt(1) != '-') {
             // -v1--v2
             int index = strings[0].indexOf("--");
             if (index != -1) {
-                return new float[]{convertToFloat(strings[0].substring(0, index)), convertToFloat(strings[0].substring(index + 1))};
+                return new Interval<>(convertToFloat(strings[0].substring(0, index)), convertToFloat(strings[0].substring(index + 1)));
             }
         }
 
-        throw new ParameterException("unable convert " + strings[0] + " to Float-Float");
+        throw new ParameterException("unable convert " + strings[0] + " to <float>-<float>");
     }, null, 1, "<float>-<float>"),
 
     /**
-     * label-array 值转换器
+     * label-range 值转换器
      * <p>
      * 输入格式: &lt;string&gt;:&lt;float&gt;-&lt;float&gt; &lt;string&gt;:&lt;float&gt;-&lt;float&gt; ...
      * <p>
-     * 转换格式: Map&lt;String, float[]&gt;
+     * 转换格式: Map&lt;String, Interval&lt;Float&gt;&gt;
      */
-    LABEL_RANGE((Function<String[], Map<String, float[]>>) strings -> {
-        Map<String, float[]> values = new LinkedHashMap<>(strings.length);
+    @SuppressWarnings("unchecked")
+    LABEL_RANGE((Function<String[], Map<String, Interval<Float>>>) strings -> {
+        Map<String, Interval<Float>> values = new LinkedHashMap<>(strings.length);
 
         for (String string : strings) {
             String[] groups = string.split(":", -1);
@@ -209,28 +216,30 @@ public enum FLOAT implements IType {
             if (values.containsKey(groups[0])) {
                 throw new ParameterException("key " + groups[0] + " is set repeatedly");
             }
-            values.put(groups[0], (float[]) RANGE.convert(groups[1]));
+            values.put(groups[0], (Interval<Float>) RANGE.convert(groups[1]));
         }
         return Collections.unmodifiableMap(values);
     }, null, -1, "<string>:<float>-<float> <string>:<float>-<float> ..."),
 
     /**
-     * label-array 值转换器
+     * label-range 值转换器
      * <p>
      * 输入格式: &lt;string&gt;:&lt;float&gt;-&lt;float&gt;,&lt;string&gt;:&lt;float&gt;-&lt;float&gt;,...
      * <p>
-     * 转换格式: Map&lt;String, float[]&gt;
+     * 转换格式: Map&lt;String, Interval&lt;Float&gt;&gt;
      */
-    LABEL_RANGE_COMMA((Function<String[], Map<String, float[]>>) strings -> (Map<String, float[]>) LABEL_RANGE.convert(strings[0].split(",")), null, 1, "<string>:<float>-<float>,<string>:<float>-<float>,..."),
+    @SuppressWarnings("unchecked")
+    LABEL_RANGE_COMMA((Function<String[], Map<String, Interval<Float>>>) strings -> (Map<String, Interval<Float>>) LABEL_RANGE.convert(strings[0].split(",")), null, 1, "<string>:<float>-<float>,<string>:<float>-<float>,..."),
 
     /**
-     * label-array 值转换器
+     * label-range 值转换器
      * <p>
      * 输入格式: &lt;string&gt;:&lt;float&gt;-&lt;float&gt;;&lt;string&gt;:&lt;float&gt;-&lt;float&gt;;...
      * <p>
-     * 转换格式: Map&lt;String, float[]&gt;
+     * 转换格式: Map&lt;String, Interval&lt;Float&gt;&gt;
      */
-    LABEL_RANGE_SEMICOLON((Function<String[], Map<String, float[]>>) strings -> (Map<String, float[]>) LABEL_RANGE.convert(strings[0].split(";")), null, 1, "<string>:<float>-<float>;<string>:<float>-<float>;..."),
+    @SuppressWarnings("unchecked")
+    LABEL_RANGE_SEMICOLON((Function<String[], Map<String, Interval<Float>>>) strings -> (Map<String, Interval<Float>>) LABEL_RANGE.convert(strings[0].split(";")), null, 1, "<string>:<float>-<float>;<string>:<float>-<float>;..."),
 
     /**
      * label-array 值转换器
@@ -269,6 +278,7 @@ public enum FLOAT implements IType {
      * <p>
      * 转换格式: Map&lt;String, float[]&gt;
      */
+    @SuppressWarnings("unchecked")
     LABEL_ARRAY_SEMICOLON((Function<String[], Map<String, float[]>>) strings -> (Map<String, float[]>) LABEL_ARRAY.convert(strings[0].split(";")), null, 1, "<string>:<float>,<float>,...;<string>:<float>,<float>,...;...");
 
     private final Function<String[], ?> converter;
@@ -327,14 +337,18 @@ public enum FLOAT implements IType {
      * @return 数值范围验证器
      */
     public static IValidator validateWith(float minValue, float maxValue) {
+        Assert.that(minValue <= maxValue);
+
         return new IValidator() {
             @Override
+            @SuppressWarnings("unchecked")
             public Object validate(String commandKey, Object params) {
                 if (params instanceof Float) {
                     float value = (float) params;
                     if (value < minValue || value > maxValue) {
                         throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
                     }
+                    return value;
                 } else if (params instanceof float[]) {
                     float[] values = (float[]) params;
                     for (float value : values) {
@@ -342,6 +356,7 @@ public enum FLOAT implements IType {
                             throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
                         }
                     }
+                    return values;
                 } else if (params instanceof Set<?>) {
                     Set<Float> values = (Set<Float>) params;
                     for (float value : values) {
@@ -349,25 +364,43 @@ public enum FLOAT implements IType {
                             throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
                         }
                     }
-                } else if (params instanceof Map<?, ?>) {
-                    Map<String, ?> values = (Map<String, ?>) params;
-                    for (Object value : values.values()) {
-                        if (value instanceof Float) {
-                            if ((Float) value < minValue || (Float) value > maxValue) {
-                                throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
-                            }
-                        } else if (value instanceof float[]) {
-                            for (float v : (float[]) value) {
-                                if (v < minValue || v > maxValue) {
-                                    throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
-                                }
-                            }
+                    return values;
+                } else if (params instanceof Interval<?>) {
+                    Interval<Float> values = (Interval<Float>) params;
+                    if (values.nullity()) {
+                        throw new ParameterException("the interval " + values + " is invalid");
+                    }
+
+                    if (values.start() == null && values.end() == null) {
+                        values = new Interval<>(minValue, maxValue);
+                    } else if (values.start() == null) {
+                        if (values.end() > maxValue) {
+                            throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
+                        }
+
+                        values = new Interval<>(minValue, values.end());
+                    } else if (values.end() == null) {
+                        if (values.start() < minValue) {
+                            throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
+                        }
+
+                        values = new Interval<>(values.start(), maxValue);
+                    } else {
+                        if (values.start() < minValue || values.end() > maxValue) {
+                            throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
                         }
                     }
+                    return values;
+                } else if (params instanceof Map<?, ?>) {
+                    Map<String, ?> values = (Map<String, ?>) params;
+                    Map<String, Object> parsed = new LinkedHashMap<>();
+                    for (String key : values.keySet()) {
+                        parsed.put(commandKey, validate(commandKey, values.get(key)));
+                    }
+                    return parsed;
                 } else {
                     throw new ParameterException("unable to infer the value type of " + commandKey);
                 }
-                return params;
             }
 
             @Override
@@ -402,12 +435,14 @@ public enum FLOAT implements IType {
     public static IValidator validateWith(float minValue) {
         return new IValidator() {
             @Override
+            @SuppressWarnings("unchecked")
             public Object validate(String commandKey, Object params) {
                 if (params instanceof Float) {
                     float value = (float) params;
                     if (value < minValue) {
                         throw new ParameterException(commandKey + " less than " + minValue);
                     }
+                    return value;
                 } else if (params instanceof float[]) {
                     float[] values = (float[]) params;
                     for (float value : values) {
@@ -415,6 +450,7 @@ public enum FLOAT implements IType {
                             throw new ParameterException(commandKey + " less than " + minValue);
                         }
                     }
+                    return values;
                 } else if (params instanceof Set<?>) {
                     Set<Float> values = (Set<Float>) params;
                     for (float value : values) {
@@ -422,25 +458,31 @@ public enum FLOAT implements IType {
                             throw new ParameterException(commandKey + " less than " + minValue);
                         }
                     }
-                } else if (params instanceof Map<?, ?>) {
-                    Map<String, ?> values = (Map<String, ?>) params;
-                    for (Object value : values.values()) {
-                        if (value instanceof Float) {
-                            if ((Float) value < minValue) {
-                                throw new ParameterException(commandKey + " less than " + minValue);
-                            }
-                        } else if (value instanceof float[]) {
-                            for (float v : (float[]) value) {
-                                if (v < minValue) {
-                                    throw new ParameterException(commandKey + " less than " + minValue);
-                                }
-                            }
+                    return values;
+                } else if (params instanceof Interval<?>) {
+                    Interval<Float> values = (Interval<Float>) params;
+                    if (values.nullity()) {
+                        throw new ParameterException("the interval " + values + " is invalid");
+                    }
+
+                    if (values.start() == null) {
+                        values = new Interval<>(minValue, values.end());
+                    } else {
+                        if (values.start() < minValue) {
+                            throw new ParameterException(commandKey + " < " + minValue);
                         }
                     }
+                    return values;
+                } else if (params instanceof Map<?, ?>) {
+                    Map<String, ?> values = (Map<String, ?>) params;
+                    Map<String, Object> parsed = new LinkedHashMap<>();
+                    for (String key : values.keySet()) {
+                        parsed.put(commandKey, validate(commandKey, values.get(key)));
+                    }
+                    return parsed;
                 } else {
                     throw new ParameterException("unable to infer the value type of " + commandKey);
                 }
-                return params;
             }
 
             @Override

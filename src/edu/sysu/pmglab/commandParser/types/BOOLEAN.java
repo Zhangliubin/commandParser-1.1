@@ -119,6 +119,7 @@ public enum BOOLEAN implements IType {
      * <p>
      * 转换格式: Map&lt;String, Boolean&gt;
      */
+    @SuppressWarnings("unchecked")
     MAP_COMMA((Function<String[], Map<String, Boolean>>) strings -> (Map<String, Boolean>) MAP.convert(strings[0].split(",")), null, 1, "<string>=<bool>,<string>=<bool>,..."),
 
     /**
@@ -128,6 +129,7 @@ public enum BOOLEAN implements IType {
      * <p>
      * 转换格式: Map&lt;String, Boolean&gt;
      */
+    @SuppressWarnings("unchecked")
     MAP_SEMICOLON((Function<String[], Map<String, Boolean>>) strings -> (Map<String, Boolean>) MAP.convert(strings[0].split(";")), null, 1, "<string>=<bool>;<string>=<bool>;..."),
 
     /**
@@ -166,6 +168,7 @@ public enum BOOLEAN implements IType {
      * <p>
      * 转换格式: Map&lt;String, boolean[]&gt;
      */
+    @SuppressWarnings("unchecked")
     LABEL_ARRAY_SEMICOLON((Function<String[], Map<String, boolean[]>>) strings -> (Map<String, boolean[]>) LABEL_ARRAY.convert(strings[0].split(";")), null, 1, "<string>:<bool>,<bool>,...;<string>:<bool>,<bool>,...;...");
 
     private final Function<String[], ?> converter;

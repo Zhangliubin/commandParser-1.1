@@ -53,7 +53,7 @@ The description of each property is shown as following:
 | Propertie                  | Description                                       |
 | :--------------------------------------- | :----------------------------------------------------------- |
 | Command Name                 | 1. Separate with commas if the command item has multiple names (e.g. `--output,-o`), and the first name will be regarded as the main command name. <br />2. Format of parameter name: 0-9A-ZA-Z +-\_.<br />3. Click the Check button to check for the format and duplicate names after entering the command name. Only the eligible command name can have other properties and be submitted. |
-| [Command Type](#参数格式) | 1. Including None (by default, check whether be passed in or not), Boolean, Byte, Short, Integer, Long, Float, Double, String, File.<br />2. Derived data types: Value, Array, Set, Range etc. |
+| [Command Type](#参数格式) | 1. Including None (by default, check whether be passed in or not), Boolean, Short, Short, Integer, Long, Float, Double, String, File.<br />2. Derived data types: Value, Array, Set, Range etc. |
 | [Validator](#参数验证器) | Different types of command item have different validators, see details in [Validator](#参数验证器). |
 | Default                     | The default value should be transform by Command Type and validated by the Validator. And the input format should be consistent with the format defined by `Format ` and `Arity`. |
 | Arity                      | Set the arity. "-1" indicates an indefinite length (0 parameter is also approved). All parameters before the next command item are regarded as the value of this command item. |
@@ -94,7 +94,7 @@ Validators for different types of command item are shown as below:
 | Command Type                              | Support Types                                                |
 | :---------------------------------------- | :----------------------------------------------------------- |
 | None, Boolean                             | Don't support validator                                      |
-| Byte, Short, Integer, Long, Float, Double | Validators for numeric range :<br />1. Range (including boundary values): minimum to maximum; <br />2. Specify minimum value: ≥ minimum value. |
+| Short, Short, Integer, Long, Float, Double | Validators for numeric range :<br />1. Range (including boundary values): minimum to maximum; <br />2. Specify minimum value: ≥ minimum value. |
 | String                                    | Validators for qualified values: <br />Multiple qualified values are separated by spaces.<br />ignoreCase: whether to ignore case or not;<br />indexAccess: allow the use of indexes instead of specific values (0 represents the first qualified value...). |
 | File                                      | Validators for files: <br />File Exists: The file path must exist. <br />Single File: The file path cannot be a folder; <br />Directory: The file path must be a folder |
 

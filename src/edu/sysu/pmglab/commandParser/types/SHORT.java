@@ -2,7 +2,9 @@ package edu.sysu.pmglab.commandParser.types;
 
 import edu.sysu.pmglab.commandParser.exception.CommandParserException;
 import edu.sysu.pmglab.commandParser.exception.ParameterException;
+import edu.sysu.pmglab.container.Interval;
 import edu.sysu.pmglab.easytools.ArrayUtils;
+import edu.sysu.pmglab.easytools.Assert;
 
 import java.util.*;
 import java.util.function.Function;
@@ -77,6 +79,7 @@ public enum SHORT implements IType {
      * <p>
      * 转换格式: Set&lt;Short&gt;
      */
+    @SuppressWarnings("unchecked")
     SET_COMMA((Function<String[], Set<Short>>) strings -> (Set<Short>) SET.convert(strings[0].split(",")), null, 1, "<short>,<short>,..."),
 
     /**
@@ -86,6 +89,7 @@ public enum SHORT implements IType {
      * <p>
      * 转换格式: Set&lt;Short&gt;
      */
+    @SuppressWarnings("unchecked")
     SET_SEMICOLON((Function<String[], Set<Short>>) strings -> (Set<Short>) SET.convert(strings[0].split(";")), null, 1, "<short>;<short>;..."),
 
     /**
@@ -123,6 +127,7 @@ public enum SHORT implements IType {
      * <p>
      * 转换格式: Map&lt;String, Short&gt;
      */
+    @SuppressWarnings("unchecked")
     MAP_COMMA((Function<String[], Map<String, Short>>) strings -> (Map<String, Short>) MAP.convert(strings[0].split(",")), null, 1, "<string>=<short>,<string>=<short>,..."),
 
     /**
@@ -132,6 +137,7 @@ public enum SHORT implements IType {
      * <p>
      * 转换格式: Map&lt;String, Short&gt;
      */
+    @SuppressWarnings("unchecked")
     MAP_SEMICOLON((Function<String[], Map<String, Short>>) strings -> (Map<String, Short>) MAP.convert(strings[0].split(";")), null, 1, "<string>=<short>;<string>=<short>;..."),
 
     /**
@@ -139,60 +145,61 @@ public enum SHORT implements IType {
      * <p>
      * 输入格式: &lt;short&gt;-&lt;short&gt;
      * <p>
-     * 转换格式: short[]
+     * 转换格式: Interval&lt;Short&gt;
      */
-    RANGE((Function<String[], short[]>) strings -> {
+    RANGE((Function<String[], Interval<Short>>) strings -> {
         int count = ArrayUtils.valueCounts(strings[0], '-');
         if (count == 1) {
             // v1-v2 型号
             String[] parsed = strings[0].split("-", -1);
-            return new short[]{parsed[0].length() == 0 ? Short.MIN_VALUE : convertToShort(parsed[0]),
-                    parsed[1].length() == 0 ? Short.MAX_VALUE : convertToShort(parsed[1])};
+            return new Interval<>(parsed[0].length() == 0 ? null : convertToShort(parsed[0]),
+                    parsed[1].length() == 0 ? null : convertToShort(parsed[1]));
         } else if (count == 2) {
             if (strings[0].length() == 2) {
                 // --
-                throw new ParameterException("unable convert -- to Short-Short");
+                throw new ParameterException("unable convert -- to <short>-<short>");
             }
 
             if (strings[0].charAt(0) == '-') {
                 if (strings[0].charAt(1) == '-') {
                     // --v1
-                    return new short[]{Short.MIN_VALUE, convertToShort(strings[0].substring(1))};
+                    return new Interval<>(null, convertToShort(strings[0].substring(1)));
                 } else if (strings[0].charAt(strings[0].length() - 1) == '-') {
                     // -v1-
-                    return new short[]{convertToShort(strings[0].substring(0, strings[0].length() - 1)), Short.MAX_VALUE};
+                    return new Interval<>(convertToShort(strings[0].substring(0, strings[0].length() - 1)), null);
                 } else {
                     // -v1-v2
                     int index = strings[0].indexOf('-', 1);
-                    return new short[]{convertToShort(strings[0].substring(0, index)), convertToShort(strings[0].substring(index + 1))};
+                    return new Interval<>(convertToShort(strings[0].substring(0, index)), convertToShort(strings[0].substring(index + 1)));
                 }
             } else {
                 // v1--v2
                 int index = strings[0].indexOf("--");
                 if (index != -1) {
-                    return new short[]{convertToShort(strings[0].substring(0, index)), convertToShort(strings[0].substring(index + 1))};
+                    return new Interval<>(convertToShort(strings[0].substring(0, index)), convertToShort(strings[0].substring(index + 1)));
                 }
             }
         } else if (count == 3 && strings[0].charAt(0) == '-' && strings[0].charAt(1) != '-') {
             // -v1--v2
             int index = strings[0].indexOf("--");
             if (index != -1) {
-                return new short[]{convertToShort(strings[0].substring(0, index)), convertToShort(strings[0].substring(index + 1))};
+                return new Interval<>(convertToShort(strings[0].substring(0, index)), convertToShort(strings[0].substring(index + 1)));
             }
         }
 
-        throw new ParameterException("unable convert " + strings[0] + " to Short-Short");
+        throw new ParameterException("unable convert " + strings[0] + " to <short>-<short>");
     }, null, 1, "<short>-<short>"),
 
     /**
-     * label-array 值转换器
+     * label-range 值转换器
      * <p>
      * 输入格式: &lt;string&gt;:&lt;short&gt;-&lt;short&gt; &lt;string&gt;:&lt;short&gt;-&lt;short&gt; ...
      * <p>
-     * 转换格式: Map&lt;String, short[]&gt;
+     * 转换格式: Map&lt;String, Interval&lt;Short&gt;&gt;
      */
-    LABEL_RANGE((Function<String[], Map<String, short[]>>) strings -> {
-        Map<String, short[]> values = new LinkedHashMap<>(strings.length);
+    @SuppressWarnings("unchecked")
+    LABEL_RANGE((Function<String[], Map<String, Interval<Short>>>) strings -> {
+        Map<String, Interval<Short>> values = new LinkedHashMap<>(strings.length);
 
         for (String string : strings) {
             String[] groups = string.split(":", -1);
@@ -205,32 +212,30 @@ public enum SHORT implements IType {
                 throw new ParameterException("key " + groups[0] + " is set repeatedly");
             }
 
-            if (groups[1].length() == 0) {
-                values.put(groups[0], new short[0]);
-            } else {
-                values.put(groups[0], (short[]) ARRAY_COMMA.convert(groups[1]));
-            }
+            values.put(groups[0], (Interval<Short>) RANGE.convert(groups[1]));
         }
         return Collections.unmodifiableMap(values);
     }, null, -1, "<string>:<short>-<short> <string>:<short>-<short> ..."),
 
     /**
-     * label-array 值转换器
+     * label-range 值转换器
      * <p>
      * 输入格式: &lt;string&gt;:&lt;short&gt;-&lt;short&gt;,&lt;string&gt;:&lt;short&gt;-&lt;short&gt;,...
      * <p>
-     * 转换格式: Map&lt;String, short[]&gt;
+     * 转换格式: Map&lt;String, Interval&lt;Short&gt;&gt;
      */
-    LABEL_RANGE_COMMA((Function<String[], Map<String, short[]>>) strings -> (Map<String, short[]>) LABEL_RANGE.convert(strings[0].split(",")), null, 1, "<string>:<short>-<short>,<string>:<short>-<short>,..."),
+    @SuppressWarnings("unchecked")
+    LABEL_RANGE_COMMA((Function<String[], Map<String, Interval<Short>>>) strings -> (Map<String, Interval<Short>>) LABEL_RANGE.convert(strings[0].split(",")), null, 1, "<string>:<short>-<short>,<string>:<short>-<short>,..."),
 
     /**
-     * label-array 值转换器
+     * label-range 值转换器
      * <p>
      * 输入格式: &lt;string&gt;:&lt;short&gt;-&lt;short&gt;;&lt;string&gt;:&lt;short&gt;-&lt;short&gt;;...
      * <p>
-     * 转换格式: Map&lt;String, short[]&gt;
+     * 转换格式: Map&lt;String, Interval&lt;Short&gt;&gt;
      */
-    LABEL_RANGE_SEMICOLON((Function<String[], Map<String, short[]>>) strings -> (Map<String, short[]>) LABEL_RANGE.convert(strings[0].split(";")), null, 1, "<string>:<short>-<short>;<string>:<short>-<short>;..."),
+    @SuppressWarnings("unchecked")
+    LABEL_RANGE_SEMICOLON((Function<String[], Map<String, Interval<Short>>>) strings -> (Map<String, Interval<Short>>) LABEL_RANGE.convert(strings[0].split(";")), null, 1, "<string>:<short>-<short>;<string>:<short>-<short>;..."),
 
     /**
      * label-array 值转换器
@@ -264,6 +269,7 @@ public enum SHORT implements IType {
      * <p>
      * 转换格式: Map&lt;String, short[]&gt;
      */
+    @SuppressWarnings("unchecked")
     LABEL_ARRAY_SEMICOLON((Function<String[], Map<String, short[]>>) strings -> (Map<String, short[]>) LABEL_ARRAY.convert(strings[0].split(";")), null, 1, "<string>:<short>,<short>,...;<string>:<short>,<short>,...;...");
 
     private final Function<String[], ?> converter;
@@ -322,14 +328,18 @@ public enum SHORT implements IType {
      * @return 数值范围验证器
      */
     public static IValidator validateWith(short minValue, short maxValue) {
+        Assert.that(minValue <= maxValue);
+
         return new IValidator() {
             @Override
+            @SuppressWarnings("unchecked")
             public Object validate(String commandKey, Object params) {
                 if (params instanceof Short) {
                     short value = (short) params;
                     if (value < minValue || value > maxValue) {
                         throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
                     }
+                    return value;
                 } else if (params instanceof short[]) {
                     short[] values = (short[]) params;
                     for (short value : values) {
@@ -337,6 +347,7 @@ public enum SHORT implements IType {
                             throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
                         }
                     }
+                    return values;
                 } else if (params instanceof Set<?>) {
                     Set<Short> values = (Set<Short>) params;
                     for (short value : values) {
@@ -344,25 +355,43 @@ public enum SHORT implements IType {
                             throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
                         }
                     }
-                } else if (params instanceof Map<?, ?>) {
-                    Map<String, ?> values = (Map<String, ?>) params;
-                    for (Object value : values.values()) {
-                        if (value instanceof Short) {
-                            if ((Short) value < minValue || (Short) value > maxValue) {
-                                throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
-                            }
-                        } else if (value instanceof short[]) {
-                            for (short v : (short[]) value) {
-                                if (v < minValue || v > maxValue) {
-                                    throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
-                                }
-                            }
+                    return values;
+                } else if (params instanceof Interval<?>) {
+                    Interval<Short> values = (Interval<Short>) params;
+                    if (values.nullity()) {
+                        throw new ParameterException("the interval " + values + " is invalid");
+                    }
+
+                    if (values.start() == null && values.end() == null) {
+                        values = new Interval<>(minValue, maxValue);
+                    } else if (values.start() == null) {
+                        if (values.end() > maxValue) {
+                            throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
+                        }
+
+                        values = new Interval<>(minValue, values.end());
+                    } else if (values.end() == null) {
+                        if (values.start() < minValue) {
+                            throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
+                        }
+
+                        values = new Interval<>(values.start(), maxValue);
+                    } else {
+                        if (values.start() < minValue || values.end() > maxValue) {
+                            throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
                         }
                     }
+                    return values;
+                } else if (params instanceof Map<?, ?>) {
+                    Map<String, ?> values = (Map<String, ?>) params;
+                    Map<String, Object> parsed = new LinkedHashMap<>();
+                    for (String key : values.keySet()) {
+                        parsed.put(commandKey, validate(commandKey, values.get(key)));
+                    }
+                    return parsed;
                 } else {
                     throw new ParameterException("unable to infer the value type of " + commandKey);
                 }
-                return params;
             }
 
             @Override
@@ -397,12 +426,14 @@ public enum SHORT implements IType {
     public static IValidator validateWith(short minValue) {
         return new IValidator() {
             @Override
+            @SuppressWarnings("unchecked")
             public Object validate(String commandKey, Object params) {
                 if (params instanceof Short) {
                     short value = (short) params;
                     if (value < minValue) {
                         throw new ParameterException(commandKey + " less than " + minValue);
                     }
+                    return value;
                 } else if (params instanceof short[]) {
                     short[] values = (short[]) params;
                     for (short value : values) {
@@ -410,6 +441,7 @@ public enum SHORT implements IType {
                             throw new ParameterException(commandKey + " less than " + minValue);
                         }
                     }
+                    return values;
                 } else if (params instanceof Set<?>) {
                     Set<Short> values = (Set<Short>) params;
                     for (short value : values) {
@@ -417,25 +449,31 @@ public enum SHORT implements IType {
                             throw new ParameterException(commandKey + " less than " + minValue);
                         }
                     }
-                } else if (params instanceof Map<?, ?>) {
-                    Map<String, ?> values = (Map<String, ?>) params;
-                    for (Object value : values.values()) {
-                        if (value instanceof Short) {
-                            if ((Short) value < minValue) {
-                                throw new ParameterException(commandKey + " less than " + minValue);
-                            }
-                        } else if (value instanceof short[]) {
-                            for (short v : (short[]) value) {
-                                if (v < minValue) {
-                                    throw new ParameterException(commandKey + " less than " + minValue);
-                                }
-                            }
+                    return values;
+                } else if (params instanceof Interval<?>) {
+                    Interval<Short> values = (Interval<Short>) params;
+                    if (values.nullity()) {
+                        throw new ParameterException("the interval " + values + " is invalid");
+                    }
+
+                    if (values.start() == null) {
+                        values = new Interval<>(minValue, values.end());
+                    } else {
+                        if (values.start() < minValue) {
+                            throw new ParameterException(commandKey + " < " + minValue);
                         }
                     }
+                    return values;
+                } else if (params instanceof Map<?, ?>) {
+                    Map<String, ?> values = (Map<String, ?>) params;
+                    Map<String, Object> parsed = new LinkedHashMap<>();
+                    for (String key : values.keySet()) {
+                        parsed.put(commandKey, validate(commandKey, values.get(key)));
+                    }
+                    return parsed;
                 } else {
                     throw new ParameterException("unable to infer the value type of " + commandKey);
                 }
-                return params;
             }
 
             @Override

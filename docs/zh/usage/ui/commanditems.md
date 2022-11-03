@@ -53,7 +53,7 @@
 | 参数属性                             | 描述                                                     |
 | :--------------------------------------- | :----------------------------------------------------------- |
 | Command Name<br />参数名                 | 1. 参数具有多个参数名时，使用逗号分隔 (如: --output,-o)，第一个参数名作为主参数名;<br />2. 参数名格式: 0-9a-zA-Z+-_;<br />3. 参数名输入完成后点击 check 按钮进行检查 (检查是否符合格式、是否重名)，通过检查后的参数才能设置其他属性和提交。 |
-| Command Type<br />[参数类型](#参数格式)  | 1. 内置 None (无类型，仅验证是否被传入), Boolean, Byte, Short, Integer, Long, Float, Double, String, File 10 种基本类型;<br />2. 数据类型派生 Value, Array, Set, Range 等类型。 |
+| Command Type<br />[参数类型](#参数格式)  | 1. 内置 None (无类型，仅验证是否被传入), Boolean, Short, Short, Integer, Long, Float, Double, String, File 10 种基本类型;<br />2. 数据类型派生 Value, Array, Set, Range 等类型。 |
 | Validator<br />[参数验证器](#参数验证器) | 不同参数类型可用的验证器种类不同 (文件验证器、数值验证器等)，详见[参数验证器](#参数验证器)。 |
 | Default<br />默认值                      | 该默认值需要经过 Command Type 进行格式转换及 Validator 参数值验证，输入格式与 Format 和 Arity 定义的格式一致。 |
 | Arity<br />参数长度            | -1 表示不确定的长度(可以是 0 个参数)，直到下一个匹配的命令项的所有参数都被认为是这个命令项的值。 |
@@ -94,7 +94,7 @@
 | Command Type                                            | Validator 支持的类型                                         |
 | :------------------------------------------------------ | :----------------------------------------------------------- |
 | None, Boolean                                           | 不支持使用验证器。                                           |
-| Byte, Short, Integer, Long, Float, Double<br />数值类型 | 数值范围验证器:<br />1. 范围 (包含边界值): 最小值 ∼ 最大值;<br />2. 指定最小值: ≥ 最小值。 |
+| Short, Short, Integer, Long, Float, Double<br />数值类型 | 数值范围验证器:<br />1. 范围 (包含边界值): 最小值 ∼ 最大值;<br />2. 指定最小值: ≥ 最小值。 |
 | String<br />字符串类型                                  | 限定值验证器 (只能取指定的元素):<br />多个限定值使用空格分隔，Ignore Case 忽略大小写，Index Access 允许使用索引访问 (0 代表第一个限定值…)。 |
 | File<br />文件类型                                      | 文件验证器<br />File Exists 文件路径必须存在;<br />Single File 文件路径不能指向文件夹;<br />Directory 文件路径必须指向文件夹 |
 

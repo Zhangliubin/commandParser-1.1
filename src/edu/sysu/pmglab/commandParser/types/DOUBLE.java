@@ -2,7 +2,9 @@ package edu.sysu.pmglab.commandParser.types;
 
 import edu.sysu.pmglab.commandParser.exception.CommandParserException;
 import edu.sysu.pmglab.commandParser.exception.ParameterException;
+import edu.sysu.pmglab.container.Interval;
 import edu.sysu.pmglab.easytools.ArrayUtils;
+import edu.sysu.pmglab.easytools.Assert;
 
 import java.util.*;
 import java.util.function.Function;
@@ -77,6 +79,7 @@ public enum DOUBLE implements IType {
      * <p>
      * 转换格式: Set&lt;Double&gt;
      */
+    @SuppressWarnings("unchecked")
     SET_COMMA((Function<String[], Set<Double>>) strings -> (Set<Double>) SET.convert(strings[0].split(",")), null, 1, "<double>,<double>,..."),
 
     /**
@@ -86,6 +89,7 @@ public enum DOUBLE implements IType {
      * <p>
      * 转换格式: Set&lt;Double&gt;
      */
+    @SuppressWarnings("unchecked")
     SET_SEMICOLON((Function<String[], Set<Double>>) strings -> (Set<Double>) SET.convert(strings[0].split(";")), null, 1, "<double>;<double>;..."),
 
     /**
@@ -123,6 +127,7 @@ public enum DOUBLE implements IType {
      * <p>
      * 转换格式: Map&lt;String, Double&gt;
      */
+    @SuppressWarnings("unchecked")
     MAP_COMMA((Function<String[], Map<String, Double>>) strings -> (Map<String, Double>) MAP.convert(strings[0].split(",")), null, 1, "<string>=<double>,<string>=<double>,..."),
 
     /**
@@ -132,6 +137,7 @@ public enum DOUBLE implements IType {
      * <p>
      * 转换格式: Map&lt;String, Double&gt;
      */
+    @SuppressWarnings("unchecked")
     MAP_SEMICOLON((Function<String[], Map<String, Double>>) strings -> (Map<String, Double>) MAP.convert(strings[0].split(";")), null, 1, "<string>=<double>;<string>=<double>;..."),
 
     /**
@@ -139,9 +145,9 @@ public enum DOUBLE implements IType {
      * <p>
      * 输入格式: &lt;double&gt;-&lt;double&gt;
      * <p>
-     * 转换格式: double[]
+     * 转换格式: Interval&lt;Double&gt;
      */
-    RANGE((Function<String[], double[]>) strings -> {
+    RANGE((Function<String[], Interval<Double>>) strings -> {
         if (strings[0].contains("e") || strings[0].contains("E")) {
             // 科学计数法中可能存在 -1e-5-1e-6 这类形式, 需要额外的分支逻辑,
             throw new ParameterException("unable to parse floating point numbers in scientific notation (i.e. containing 'e' or 'E')");
@@ -151,53 +157,54 @@ public enum DOUBLE implements IType {
         if (count == 1) {
             // v1-v2 型号
             String[] parsed = strings[0].split("-", -1);
-            return new double[]{parsed[0].length() == 0 ? Double.NaN : convertToDouble(parsed[0]),
-                    parsed[1].length() == 0 ? Double.NaN : convertToDouble(parsed[1])};
+            return new Interval<>(parsed[0].length() == 0 ? null : convertToDouble(parsed[0]),
+                    parsed[1].length() == 0 ? null : convertToDouble(parsed[1]));
         } else if (count == 2) {
             if (strings[0].length() == 2) {
                 // --
-                throw new ParameterException("unable convert -- to Double-Double");
+                throw new ParameterException("unable convert -- to <double>-<double>");
             }
 
             if (strings[0].charAt(0) == '-') {
                 if (strings[0].charAt(1) == '-') {
                     // --v1
-                    return new double[]{Double.NaN, convertToDouble(strings[0].substring(1))};
+                    return new Interval<>(null, convertToDouble(strings[0].substring(1)));
                 } else if (strings[0].charAt(strings[0].length() - 1) == '-') {
                     // -v1-
-                    return new double[]{convertToDouble(strings[0].substring(0, strings[0].length() - 1)), Double.NaN};
+                    return new Interval<>(convertToDouble(strings[0].substring(0, strings[0].length() - 1)), null);
                 } else {
                     // -v1-v2
                     int index = strings[0].indexOf('-', 1);
-                    return new double[]{convertToDouble(strings[0].substring(0, index)), convertToDouble(strings[0].substring(index + 1))};
+                    return new Interval<>(convertToDouble(strings[0].substring(0, index)), convertToDouble(strings[0].substring(index + 1)));
                 }
             } else {
                 // v1--v2
                 int index = strings[0].indexOf("--");
                 if (index != -1) {
-                    return new double[]{convertToDouble(strings[0].substring(0, index)), convertToDouble(strings[0].substring(index + 1))};
+                    return new Interval<>(convertToDouble(strings[0].substring(0, index)), convertToDouble(strings[0].substring(index + 1)));
                 }
             }
         } else if (count == 3 && strings[0].charAt(0) == '-' && strings[0].charAt(1) != '-') {
             // -v1--v2
             int index = strings[0].indexOf("--");
             if (index != -1) {
-                return new double[]{convertToDouble(strings[0].substring(0, index)), convertToDouble(strings[0].substring(index + 1))};
+                return new Interval<>(convertToDouble(strings[0].substring(0, index)), convertToDouble(strings[0].substring(index + 1)));
             }
         }
 
-        throw new ParameterException("unable convert " + strings[0] + " to Double-Double");
+        throw new ParameterException("unable convert " + strings[0] + " to <double>-<double>");
     }, null, 1, "<double>-<double>"),
 
     /**
-     * label-array 值转换器
+     * label-range 值转换器
      * <p>
      * 输入格式: &lt;string&gt;:&lt;double&gt;-&lt;double&gt; &lt;string&gt;:&lt;double&gt;-&lt;double&gt; ...
      * <p>
-     * 转换格式: Map&lt;String, double[]&gt;
+     * 转换格式: Map&lt;String, Interval&lt;Double&gt;&gt;
      */
-    LABEL_RANGE((Function<String[], Map<String, double[]>>) strings -> {
-        Map<String, double[]> values = new LinkedHashMap<>(strings.length);
+    @SuppressWarnings("unchecked")
+    LABEL_RANGE((Function<String[], Map<String, Interval<Double>>>) strings -> {
+        Map<String, Interval<Double>> values = new LinkedHashMap<>(strings.length);
 
         for (String string : strings) {
             String[] groups = string.split(":", -1);
@@ -209,28 +216,30 @@ public enum DOUBLE implements IType {
             if (values.containsKey(groups[0])) {
                 throw new ParameterException("key " + groups[0] + " is set repeatedly");
             }
-            values.put(groups[0], (double[]) RANGE.convert(groups[1]));
+            values.put(groups[0], (Interval<Double>) RANGE.convert(groups[1]));
         }
         return Collections.unmodifiableMap(values);
     }, null, -1, "<string>:<double>-<double> <string>:<double>-<double> ..."),
 
     /**
-     * label-array 值转换器
+     * label-range 值转换器
      * <p>
      * 输入格式: &lt;string&gt;:&lt;double&gt;-&lt;double&gt;,&lt;string&gt;:&lt;double&gt;-&lt;double&gt;,...
      * <p>
-     * 转换格式: Map&lt;String, double[]&gt;
+     * 转换格式: Map&lt;String, Interval&lt;Double&gt;&gt;
      */
-    LABEL_RANGE_COMMA((Function<String[], Map<String, double[]>>) strings -> (Map<String, double[]>) LABEL_RANGE.convert(strings[0].split(",")), null, 1, "<string>:<double>-<double>,<string>:<double>-<double>,..."),
+    @SuppressWarnings("unchecked")
+    LABEL_RANGE_COMMA((Function<String[], Map<String, Interval<Double>>>) strings -> (Map<String, Interval<Double>>) LABEL_RANGE.convert(strings[0].split(",")), null, 1, "<string>:<double>-<double>,<string>:<double>-<double>,..."),
 
     /**
-     * label-array 值转换器
+     * label-range 值转换器
      * <p>
      * 输入格式: &lt;string&gt;:&lt;double&gt;-&lt;double&gt;;&lt;string&gt;:&lt;double&gt;-&lt;double&gt;;...
      * <p>
-     * 转换格式: Map&lt;String, double[]&gt;
+     * 转换格式: Map&lt;String, Interval&lt;Double&gt;&gt;
      */
-    LABEL_RANGE_SEMICOLON((Function<String[], Map<String, double[]>>) strings -> (Map<String, double[]>) LABEL_RANGE.convert(strings[0].split(";")), null, 1, "<string>:<double>-<double>;<string>:<double>-<double>;..."),
+    @SuppressWarnings("unchecked")
+    LABEL_RANGE_SEMICOLON((Function<String[], Map<String, Interval<Double>>>) strings -> (Map<String, Interval<Double>>) LABEL_RANGE.convert(strings[0].split(";")), null, 1, "<string>:<double>-<double>;<string>:<double>-<double>;..."),
 
     /**
      * label-array 值转换器
@@ -269,6 +278,7 @@ public enum DOUBLE implements IType {
      * <p>
      * 转换格式: Map&lt;String, double[]&gt;
      */
+    @SuppressWarnings("unchecked")
     LABEL_ARRAY_SEMICOLON((Function<String[], Map<String, double[]>>) strings -> (Map<String, double[]>) LABEL_ARRAY.convert(strings[0].split(";")), null, 1, "<string>:<double>,<double>,...;<string>:<double>,<double>,...;...");
 
     private final Function<String[], ?> converter;
@@ -317,7 +327,6 @@ public enum DOUBLE implements IType {
     @Override
     public String getDefaultFormat() {
         return this.defaultFormat;
-
     }
 
     /**
@@ -328,14 +337,18 @@ public enum DOUBLE implements IType {
      * @return 数值范围验证器
      */
     public static IValidator validateWith(double minValue, double maxValue) {
+        Assert.that(minValue <= maxValue);
+
         return new IValidator() {
             @Override
+            @SuppressWarnings("unchecked")
             public Object validate(String commandKey, Object params) {
                 if (params instanceof Double) {
                     double value = (double) params;
                     if (value < minValue || value > maxValue) {
                         throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
                     }
+                    return value;
                 } else if (params instanceof double[]) {
                     double[] values = (double[]) params;
                     for (double value : values) {
@@ -343,6 +356,7 @@ public enum DOUBLE implements IType {
                             throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
                         }
                     }
+                    return values;
                 } else if (params instanceof Set<?>) {
                     Set<Double> values = (Set<Double>) params;
                     for (double value : values) {
@@ -350,25 +364,43 @@ public enum DOUBLE implements IType {
                             throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
                         }
                     }
-                } else if (params instanceof Map<?, ?>) {
-                    Map<String, ?> values = (Map<String, ?>) params;
-                    for (Object value : values.values()) {
-                        if (value instanceof Double) {
-                            if ((Double) value < minValue || (Double) value > maxValue) {
-                                throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
-                            }
-                        } else if (value instanceof double[]) {
-                            for (double v : (double[]) value) {
-                                if (v < minValue || v > maxValue) {
-                                    throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
-                                }
-                            }
+                    return values;
+                } else if (params instanceof Interval<?>) {
+                    Interval<Double> values = (Interval<Double>) params;
+                    if (values.nullity()) {
+                        throw new ParameterException("the interval " + values + " is invalid");
+                    }
+
+                    if (values.start() == null && values.end() == null) {
+                        values = new Interval<>(minValue, maxValue);
+                    } else if (values.start() == null) {
+                        if (values.end() > maxValue) {
+                            throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
+                        }
+
+                        values = new Interval<>(minValue, values.end());
+                    } else if (values.end() == null) {
+                        if (values.start() < minValue) {
+                            throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
+                        }
+
+                        values = new Interval<>(values.start(), maxValue);
+                    } else {
+                        if (values.start() < minValue || values.end() > maxValue) {
+                            throw new ParameterException(commandKey + " is out of range [" + minValue + ", " + maxValue + "]");
                         }
                     }
+                    return values;
+                } else if (params instanceof Map<?, ?>) {
+                    Map<String, ?> values = (Map<String, ?>) params;
+                    Map<String, Object> parsed = new LinkedHashMap<>();
+                    for (String key : values.keySet()) {
+                        parsed.put(commandKey, validate(commandKey, values.get(key)));
+                    }
+                    return parsed;
                 } else {
                     throw new ParameterException("unable to infer the value type of " + commandKey);
                 }
-                return params;
             }
 
             @Override
@@ -403,12 +435,14 @@ public enum DOUBLE implements IType {
     public static IValidator validateWith(double minValue) {
         return new IValidator() {
             @Override
+            @SuppressWarnings("unchecked")
             public Object validate(String commandKey, Object params) {
                 if (params instanceof Double) {
                     double value = (double) params;
                     if (value < minValue) {
                         throw new ParameterException(commandKey + " less than " + minValue);
                     }
+                    return value;
                 } else if (params instanceof double[]) {
                     double[] values = (double[]) params;
                     for (double value : values) {
@@ -416,6 +450,7 @@ public enum DOUBLE implements IType {
                             throw new ParameterException(commandKey + " less than " + minValue);
                         }
                     }
+                    return values;
                 } else if (params instanceof Set<?>) {
                     Set<Double> values = (Set<Double>) params;
                     for (double value : values) {
@@ -423,25 +458,31 @@ public enum DOUBLE implements IType {
                             throw new ParameterException(commandKey + " less than " + minValue);
                         }
                     }
-                } else if (params instanceof Map<?, ?>) {
-                    Map<String, ?> values = (Map<String, ?>) params;
-                    for (Object value : values.values()) {
-                        if (value instanceof Double) {
-                            if ((Double) value < minValue) {
-                                throw new ParameterException(commandKey + " less than " + minValue);
-                            }
-                        } else if (value instanceof double[]) {
-                            for (double v : (double[]) value) {
-                                if (v < minValue) {
-                                    throw new ParameterException(commandKey + " less than " + minValue);
-                                }
-                            }
+                    return values;
+                } else if (params instanceof Interval<?>) {
+                    Interval<Double> values = (Interval<Double>) params;
+                    if (values.nullity()) {
+                        throw new ParameterException("the interval " + values + " is invalid");
+                    }
+
+                    if (values.start() == null) {
+                        values = new Interval<>(minValue, values.end());
+                    } else {
+                        if (values.start() < minValue) {
+                            throw new ParameterException(commandKey + " < " + minValue);
                         }
                     }
+                    return values;
+                } else if (params instanceof Map<?, ?>) {
+                    Map<String, ?> values = (Map<String, ?>) params;
+                    Map<String, Object> parsed = new LinkedHashMap<>();
+                    for (String key : values.keySet()) {
+                        parsed.put(commandKey, validate(commandKey, values.get(key)));
+                    }
+                    return parsed;
                 } else {
                     throw new ParameterException("unable to infer the value type of " + commandKey);
                 }
-                return params;
             }
 
             @Override

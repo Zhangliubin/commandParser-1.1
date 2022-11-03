@@ -38,22 +38,22 @@ public class CommandParserWithOptionsBuilder {
         formatter.put(BOOLEAN.LABEL_ARRAY, "Map<String, boolean[]>");
         formatter.put(BOOLEAN.LABEL_ARRAY_SEMICOLON, "Map<String, boolean[]>");
 
-        formatter.put(BYTE.VALUE, "Byte");
-        formatter.put(BYTE.ARRAY, "byte[]");
-        formatter.put(BYTE.ARRAY_COMMA, "byte[]");
-        formatter.put(BYTE.ARRAY_SEMICOLON, "byte[]");
-        formatter.put(BYTE.SET, "Set<Byte>");
-        formatter.put(BYTE.SET_COMMA, "Set<Byte>");
-        formatter.put(BYTE.SET_SEMICOLON, "Set<Byte>");
-        formatter.put(BYTE.MAP, "Map<String, Byte>");
-        formatter.put(BYTE.MAP_COMMA, "Map<String, Byte>");
-        formatter.put(BYTE.MAP_SEMICOLON, "Map<String, Byte>");
-        formatter.put(BYTE.RANGE, "byte[]");
-        formatter.put(BYTE.LABEL_RANGE, "Map<String, byte[]>");
-        formatter.put(BYTE.LABEL_RANGE_COMMA, "Map<String, byte[]>");
-        formatter.put(BYTE.LABEL_RANGE_SEMICOLON, "Map<String, byte[]>");
-        formatter.put(BYTE.LABEL_ARRAY, "Map<String, byte[]>");
-        formatter.put(BYTE.LABEL_ARRAY_SEMICOLON, "Map<String, byte[]>");
+        formatter.put(BYTE.VALUE, "Short");
+        formatter.put(BYTE.ARRAY, "short[]");
+        formatter.put(BYTE.ARRAY_COMMA, "short[]");
+        formatter.put(BYTE.ARRAY_SEMICOLON, "short[]");
+        formatter.put(BYTE.SET, "Set<Short>");
+        formatter.put(BYTE.SET_COMMA, "Set<Short>");
+        formatter.put(BYTE.SET_SEMICOLON, "Set<Short>");
+        formatter.put(BYTE.MAP, "Map<String, Short>");
+        formatter.put(BYTE.MAP_COMMA, "Map<String, Short>");
+        formatter.put(BYTE.MAP_SEMICOLON, "Map<String, Short>");
+        formatter.put(BYTE.RANGE, "Interval<Byte>");
+        formatter.put(BYTE.LABEL_RANGE, "Map<String, Interval<Byte>>");
+        formatter.put(BYTE.LABEL_RANGE_COMMA, "Map<String, Interval<Byte>>");
+        formatter.put(BYTE.LABEL_RANGE_SEMICOLON, "Map<String, Interval<Byte>>");
+        formatter.put(BYTE.LABEL_ARRAY, "Map<String, short[]>");
+        formatter.put(BYTE.LABEL_ARRAY_SEMICOLON, "Map<String, short[]>");
 
         formatter.put(SHORT.VALUE, "Short");
         formatter.put(SHORT.ARRAY, "short[]");
@@ -65,10 +65,10 @@ public class CommandParserWithOptionsBuilder {
         formatter.put(SHORT.MAP, "Map<String, Short>");
         formatter.put(SHORT.MAP_COMMA, "Map<String, Short>");
         formatter.put(SHORT.MAP_SEMICOLON, "Map<String, Short>");
-        formatter.put(SHORT.RANGE, "short[]");
-        formatter.put(SHORT.LABEL_RANGE, "Map<String, short[]>");
-        formatter.put(SHORT.LABEL_RANGE_COMMA, "Map<String, short[]>");
-        formatter.put(SHORT.LABEL_RANGE_SEMICOLON, "Map<String, short[]>");
+        formatter.put(SHORT.RANGE, "Interval<Short>");
+        formatter.put(SHORT.LABEL_RANGE, "Map<String, Interval<Short>>");
+        formatter.put(SHORT.LABEL_RANGE_COMMA, "Map<String, Interval<Short>>");
+        formatter.put(SHORT.LABEL_RANGE_SEMICOLON, "Map<String, Interval<Short>>");
         formatter.put(SHORT.LABEL_ARRAY, "Map<String, short[]>");
         formatter.put(SHORT.LABEL_ARRAY_SEMICOLON, "Map<String, short[]>");
 
@@ -82,10 +82,10 @@ public class CommandParserWithOptionsBuilder {
         formatter.put(INTEGER.MAP, "Map<String, Integer>");
         formatter.put(INTEGER.MAP_COMMA, "Map<String, Integer>");
         formatter.put(INTEGER.MAP_SEMICOLON, "Map<String, Integer>");
-        formatter.put(INTEGER.RANGE, "int[]");
-        formatter.put(INTEGER.LABEL_RANGE, "Map<String, int[]>");
-        formatter.put(INTEGER.LABEL_RANGE_COMMA, "Map<String, int[]>");
-        formatter.put(INTEGER.LABEL_RANGE_SEMICOLON, "Map<String, int[]>");
+        formatter.put(INTEGER.RANGE, "Interval<Integer>");
+        formatter.put(INTEGER.LABEL_RANGE, "Map<String, Interval<Integer>>");
+        formatter.put(INTEGER.LABEL_RANGE_COMMA, "Map<String, Interval<Integer>>");
+        formatter.put(INTEGER.LABEL_RANGE_SEMICOLON, "Map<String, Interval<Integer>>");
         formatter.put(INTEGER.LABEL_ARRAY, "Map<String, int[]>");
         formatter.put(INTEGER.LABEL_ARRAY_SEMICOLON, "Map<String, int[]>");
 
@@ -99,10 +99,10 @@ public class CommandParserWithOptionsBuilder {
         formatter.put(LONG.MAP, "Map<String, Long>");
         formatter.put(LONG.MAP_COMMA, "Map<String, Long>");
         formatter.put(LONG.MAP_SEMICOLON, "Map<String, Long>");
-        formatter.put(LONG.RANGE, "long[]");
-        formatter.put(LONG.LABEL_RANGE, "Map<String, long[]>");
-        formatter.put(LONG.LABEL_RANGE_COMMA, "Map<String, long[]>");
-        formatter.put(LONG.LABEL_RANGE_SEMICOLON, "Map<String, long[]>");
+        formatter.put(LONG.RANGE, "Interval<Long>");
+        formatter.put(LONG.LABEL_RANGE, "Map<String, Interval<Long>>");
+        formatter.put(LONG.LABEL_RANGE_COMMA, "Map<String, Interval<Float>>");
+        formatter.put(LONG.LABEL_RANGE_SEMICOLON, "Map<String, Interval<Float>>");
         formatter.put(LONG.LABEL_ARRAY, "Map<String, long[]>");
         formatter.put(LONG.LABEL_ARRAY_SEMICOLON, "Map<String, long[]>");
 
@@ -116,10 +116,10 @@ public class CommandParserWithOptionsBuilder {
         formatter.put(FLOAT.MAP, "Map<String, Float>");
         formatter.put(FLOAT.MAP_COMMA, "Map<String, Float>");
         formatter.put(FLOAT.MAP_SEMICOLON, "Map<String, Float>");
-        formatter.put(FLOAT.RANGE, "float[]");
-        formatter.put(FLOAT.LABEL_RANGE, "Map<String, float[]>");
-        formatter.put(FLOAT.LABEL_RANGE_COMMA, "Map<String, float[]>");
-        formatter.put(FLOAT.LABEL_RANGE_SEMICOLON, "Map<String, float[]>");
+        formatter.put(FLOAT.RANGE, "Interval<Float>");
+        formatter.put(FLOAT.LABEL_RANGE, "Map<String, Interval<Float>>");
+        formatter.put(FLOAT.LABEL_RANGE_COMMA, "Map<String, Interval<Float>>");
+        formatter.put(FLOAT.LABEL_RANGE_SEMICOLON, "Map<String, Interval<Float>>");
         formatter.put(FLOAT.LABEL_ARRAY, "Map<String, float[]>");
         formatter.put(FLOAT.LABEL_ARRAY_SEMICOLON, "Map<String, float[]>");
 
@@ -133,10 +133,10 @@ public class CommandParserWithOptionsBuilder {
         formatter.put(DOUBLE.MAP, "Map<String, Double>");
         formatter.put(DOUBLE.MAP_COMMA, "Map<String, Double>");
         formatter.put(DOUBLE.MAP_SEMICOLON, "Map<String, Double>");
-        formatter.put(DOUBLE.RANGE, "double[]");
-        formatter.put(DOUBLE.LABEL_RANGE, "Map<String, double[]>");
-        formatter.put(DOUBLE.LABEL_RANGE_COMMA, "Map<String, double[]>");
-        formatter.put(DOUBLE.LABEL_RANGE_SEMICOLON, "Map<String, double[]>");
+        formatter.put(DOUBLE.RANGE, "Interval<Double>");
+        formatter.put(DOUBLE.LABEL_RANGE, "Map<String, Interval<Double>>");
+        formatter.put(DOUBLE.LABEL_RANGE_COMMA, "Map<String, Interval<Double>>");
+        formatter.put(DOUBLE.LABEL_RANGE_SEMICOLON, "Map<String, Interval<Double>>");
         formatter.put(DOUBLE.LABEL_ARRAY, "Map<String, double[]>");
         formatter.put(DOUBLE.LABEL_ARRAY_SEMICOLON, "Map<String, double[]>");
 
@@ -150,10 +150,10 @@ public class CommandParserWithOptionsBuilder {
         formatter.put(STRING.MAP, "Map<String, String>");
         formatter.put(STRING.MAP_COMMA, "Map<String, String>");
         formatter.put(STRING.MAP_SEMICOLON, "Map<String, String>");
-        formatter.put(STRING.RANGE, "String[]");
-        formatter.put(STRING.LABEL_RANGE, "Map<String, String[]>");
-        formatter.put(STRING.LABEL_RANGE_COMMA, "Map<String, String[]>");
-        formatter.put(STRING.LABEL_RANGE_SEMICOLON, "Map<String, String[]>");
+        formatter.put(STRING.RANGE, "Interval<String>");
+        formatter.put(STRING.LABEL_RANGE, "Map<String, Interval<String>>");
+        formatter.put(STRING.LABEL_RANGE_COMMA, "Map<String, Interval<String>>");
+        formatter.put(STRING.LABEL_RANGE_SEMICOLON, "Map<String, Interval<String>>");
         formatter.put(STRING.LABEL_ARRAY, "Map<String, String[]>");
         formatter.put(STRING.LABEL_ARRAY_SEMICOLON, "Map<String, String[]>");
 
@@ -219,6 +219,7 @@ public class CommandParserWithOptionsBuilder {
         builder.append("import edu.sysu.pmglab.commandParser.CommandParser;\n");
         builder.append("import edu.sysu.pmglab.commandParser.usage.DefaultStyleUsage;\n");
         builder.append("import edu.sysu.pmglab.container.File;\n");
+        builder.append("import edu.sysu.pmglab.container.Interval;\n");
 
         // 导入类型包
         HashSet<String> types = new LinkedHashSet<>();
@@ -435,9 +436,9 @@ public class CommandParserWithOptionsBuilder {
 
                 if (BYTE.VALUE.equals(baseValueType)) {
                     if (validator.toString().contains("~")) {
-                        builder.append("\n                .validateWith(BYTE.validateWith((byte) " + validator.get("min") + ", (byte) " + validator.get("max") + "))");
+                        builder.append("\n                .validateWith(BYTE.validateWith((short) " + validator.get("min") + ", (short) " + validator.get("max") + "))");
                     } else {
-                        builder.append("\n                .validateWith(BYTE.validateWith((byte) " + validator.get("min") + "))");
+                        builder.append("\n                .validateWith(BYTE.validateWith((short) " + validator.get("min") + "))");
                     }
                 } else if (SHORT.VALUE.equals(baseValueType)) {
                     if (validator.toString().contains("~")) {

@@ -2,7 +2,7 @@ package edu.sysu.pmglab.commandParser.types;
 
 import edu.sysu.pmglab.commandParser.exception.CommandParserException;
 import edu.sysu.pmglab.commandParser.exception.ParameterException;
-import edu.sysu.pmglab.container.Range;
+import edu.sysu.pmglab.container.Interval;
 import edu.sysu.pmglab.container.array.StringArray;
 
 import java.util.*;
@@ -79,6 +79,7 @@ public enum STRING implements IType {
      * <p>
      * 转换格式: Set&lt;String&gt;
      */
+    @SuppressWarnings("unchecked")
     SET_COMMA((Function<String[], Set<String>>) strings -> (Set<String>) SET.convert(strings[0].split(",")), null, 1, "<string>,<string>,..."),
 
     /**
@@ -88,6 +89,7 @@ public enum STRING implements IType {
      * <p>
      * 转换格式: Set&lt;String&gt;
      */
+    @SuppressWarnings("unchecked")
     SET_SEMICOLON((Function<String[], Set<String>>) strings -> (Set<String>) SET.convert(strings[0].split(";")), null, 1, "<string>;<string>;..."),
 
     /**
@@ -125,6 +127,7 @@ public enum STRING implements IType {
      * <p>
      * 转换格式: Map&lt;String, String&gt;
      */
+    @SuppressWarnings("unchecked")
     MAP_COMMA((Function<String[], Map<String, String>>) strings -> (Map<String, String>) MAP.convert(strings[0].split(",")), null, 1, "<string>=<string>,<string>=<string>,..."),
 
     /**
@@ -134,6 +137,7 @@ public enum STRING implements IType {
      * <p>
      * 转换格式: Map&lt;String, String&gt;
      */
+    @SuppressWarnings("unchecked")
     MAP_SEMICOLON((Function<String[], Map<String, String>>) strings -> (Map<String, String>) MAP.convert(strings[0].split(";")), null, 1, "<string>=<string>;<string>=<string>;..."),
 
     /**
@@ -141,26 +145,27 @@ public enum STRING implements IType {
      * <p>
      * 输入格式: &lt;String&gt;-&lt;String&gt;
      * <p>
-     * 转换格式: String[]
+     * 转换格式: Interval&lt;Short&gt;
      */
-    RANGE((Function<String[], String[]>) strings -> {
+    RANGE((Function<String[], Interval<String>>) strings -> {
         String[] parsed = strings[0].split("-", -1);
 
         if (parsed.length != 2) {
             throw new ParameterException(strings[0] + " not in <string>-<string> format");
         }
-        return parsed;
+        return new Interval<>(parsed[0], parsed[1]);
     }, null, 1, "<string>-<string>"),
 
     /**
-     * label-array 值转换器
+     * label-range 值转换器
      * <p>
      * 输入格式: &lt;string&gt;:&lt;String&gt;-&lt;String&gt; &lt;string&gt;:&lt;String&gt;-&lt;String&gt; ...
      * <p>
-     * 转换格式: Map&lt;String, String[]&gt;
+     * 转换格式: Map&lt;String, Interval&lt;Short&gt;&gt;
      */
-    LABEL_RANGE((Function<String[], Map<String, String[]>>) strings -> {
-        Map<String, String[]> values = new LinkedHashMap<>(strings.length);
+    @SuppressWarnings("unchecked")
+    LABEL_RANGE((Function<String[], Map<String, Interval<String>>>) strings -> {
+        Map<String, Interval<String>> values = new LinkedHashMap<>(strings.length);
 
         for (String string : strings) {
             String[] groups = string.split(":", -1);
@@ -172,28 +177,30 @@ public enum STRING implements IType {
             if (values.containsKey(groups[0])) {
                 throw new ParameterException("key " + groups[0] + " is set repeatedly");
             }
-            values.put(groups[0], (String[]) RANGE.convert(groups[1]));
+            values.put(groups[0], (Interval<String>) RANGE.convert(groups[1]));
         }
         return Collections.unmodifiableMap(values);
     }, null, -1, "<string>:<string>-<string> <string>:<string>-<string> ..."),
 
     /**
-     * label-array 值转换器
+     * label-range 值转换器
      * <p>
      * 输入格式: &lt;string&gt;:&lt;String&gt;-&lt;String&gt;,&lt;string&gt;:&lt;String&gt;-&lt;String&gt;,...
      * <p>
-     * 转换格式: Map&lt;String, String[]&gt;
+     * 转换格式: Map&lt;String, Interval&lt;Short&gt;&gt;
      */
-    LABEL_RANGE_COMMA((Function<String[], Map<String, String[]>>) strings -> (Map<String, String[]>) LABEL_RANGE.convert(strings[0].split(",")), null, 1, "<string>:<string>-<string>,<string>:<string>-<string>,..."),
+    @SuppressWarnings("unchecked")
+    LABEL_RANGE_COMMA((Function<String[], Map<String, Interval<String>>>) strings -> (Map<String, Interval<String>>) LABEL_RANGE.convert(strings[0].split(",")), null, 1, "<string>:<string>-<string>,<string>:<string>-<string>,..."),
 
     /**
-     * label-array 值转换器
+     * label-range 值转换器
      * <p>
      * 输入格式: &lt;string&gt;:&lt;String&gt;-&lt;String&gt;;&lt;string&gt;:&lt;String&gt;-&lt;String&gt;;...
      * <p>
-     * 转换格式: Map&lt;String, String[]&gt;
+     * 转换格式: Map&lt;String, Interval&lt;Short&gt;&gt;
      */
-    LABEL_RANGE_SEMICOLON((Function<String[], Map<String, String[]>>) strings -> (Map<String, String[]>) LABEL_RANGE.convert(strings[0].split(";")), null, 1, "<string>:<string>-<string>;<string>:<string>-<string>;..."),
+    @SuppressWarnings("unchecked")
+    LABEL_RANGE_SEMICOLON((Function<String[], Map<String, Interval<String>>>) strings -> (Map<String, Interval<String>>) LABEL_RANGE.convert(strings[0].split(";")), null, 1, "<string>:<string>-<string>;<string>:<string>-<string>;..."),
 
     /**
      * label-array 值转换器
@@ -231,6 +238,7 @@ public enum STRING implements IType {
      * <p>
      * 转换格式: Map&lt;String, String[]&gt;
      */
+    @SuppressWarnings("unchecked")
     LABEL_ARRAY_SEMICOLON((Function<String[], Map<String, String[]>>) strings -> (Map<String, String[]>) LABEL_ARRAY.convert(strings[0].split(";")), null, 1, "<string>:<string>,<string>,...;<string>:<string>,<string>,...;...");
 
     private final Function<String[], ?> converter;
@@ -258,7 +266,7 @@ public enum STRING implements IType {
     }
 
     @Override
-    public IType getBaseValueType() {
+    public STRING getBaseValueType() {
         return STRING.VALUE;
     }
 
@@ -427,7 +435,10 @@ public enum STRING implements IType {
                 String values = StringArray.wrap(elements).join("/");
 
                 if (indexAccess) {
-                    String[] range = new Range<>(0, elements.length - 1, 1).toStringArray();
+                    String[] range = new String[elements.length];
+                    for (int i = 0; i < range.length; i ++) {
+                        range[i] = String.valueOf(i);
+                    }
                     String indexes = StringArray.wrap(range).join("/");
                     return "[" + values + "] or [" + indexes + "]" + (ignoreCase ? " (ignoreCase)" : "");
                 } else {

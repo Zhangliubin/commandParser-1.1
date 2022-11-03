@@ -277,9 +277,9 @@ public class CommandParserBuilder {
 
                 if (BYTE.VALUE.equals(baseValueType)) {
                     if (validator.toString().contains("~")) {
-                        builder.append("\n                .validateWith(BYTE.validateWith((byte) " + validator.get("min") + ", (byte) " + validator.get("max") + "))");
+                        builder.append("\n                .validateWith(BYTE.validateWith((short) " + validator.get("min") + ", (short) " + validator.get("max") + "))");
                     } else {
-                        builder.append("\n                .validateWith(BYTE.validateWith((byte) " + validator.get("min") + "))");
+                        builder.append("\n                .validateWith(BYTE.validateWith((short) " + validator.get("min") + "))");
                     }
                 } else if (SHORT.VALUE.equals(baseValueType)) {
                     if (validator.toString().contains("~")) {
