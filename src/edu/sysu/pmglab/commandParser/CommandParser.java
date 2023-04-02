@@ -613,6 +613,7 @@ public class CommandParser implements Iterable<CommandItem>, Cloneable {
 
         // 包装输入的参数信息
         StringArray params = StringArray.wrap(ArrayUtils.copyOfRange(args, this.offset, args.length));
+        params.setAutoExpansion(true);
 
         // 查看是否包含 @ 指令，如果包含则将内容解析出来
         parseAtSymbol(params);
@@ -658,7 +659,7 @@ public class CommandParser implements Iterable<CommandItem>, Cloneable {
      * @throws IOException 读取文件时可能触发 IO 异常
      */
     public static String[] readFromFile(File file) throws IOException {
-        try (FileStream fileStream = new FileStream(file, file.getName().endsWith(".gz") ? FileStream.GZIP_READER : FileStream.DEFAULT_READER)) {
+        try (FileStream fileStream = new FileStream(file, (file.getName().endsWith(".gz") || file.getName().endsWith(".bgz")) ? FileStream.GZIP_READER : FileStream.DEFAULT_READER)) {
             return convertStrings(new String(fileStream.readAll()));
         }
     }

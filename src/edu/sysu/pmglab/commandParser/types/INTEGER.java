@@ -391,7 +391,7 @@ public enum INTEGER implements IType {
                     Map<String, ?> values = (Map<String, ?>) params;
                     Map<String, Object> parsed = new LinkedHashMap<>();
                     for (String key : values.keySet()) {
-                        parsed.put(commandKey, validate(commandKey, values.get(key)));
+                        parsed.put(key, validate(commandKey, values.get(key)));
                     }
                     return parsed;
                 } else {
@@ -473,7 +473,7 @@ public enum INTEGER implements IType {
                     Map<String, ?> values = (Map<String, ?>) params;
                     Map<String, Object> parsed = new LinkedHashMap<>();
                     for (String key : values.keySet()) {
-                        parsed.put(commandKey, validate(commandKey, values.get(key)));
+                        parsed.put(key, validate(commandKey, values.get(key)));
                     }
                     return parsed;
                 } else {
