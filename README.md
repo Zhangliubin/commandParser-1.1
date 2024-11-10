@@ -1,3 +1,7 @@
+# Note:
+
+此项目已丢用. 后续等手头的工作完成了, 再发布 commandParser-3.0 版,（这绝对是 Java 里面最好用的命令行工具.
+
 # About Command Parser
 
 CommandParser is a lightweight Java platform for quickly developing, parsing, and managing command-line arguments. It provides a basic graphical interface (CommandParserDesigner) for managing and editing command items visually.
